@@ -15,7 +15,7 @@
 
 1. Start Ganache: Start the Ganache application and make note of the RPC server URL and port number.
 
-1. Connect MetaMask: Open MetaMask in your browser and click on the network dropdown in the top-left corner.
+2. Connect MetaMask: Open MetaMask in your browser and click on the network dropdown in the top-left corner.
 
 Select "Add network" at the bottom of the dropdown menu, then select "Add a network manually" at the bottom of the page and enter the following data:
 
@@ -26,11 +26,11 @@ Select "Add network" at the bottom of the dropdown menu, then select "Add a netw
 
 Click "Save".
 
-1. Import an account: In Ganache, click on the "Accounts" tab and select the first account listed, click on the icon of a key, and copy the "Private Key" field.
+3. Import an account: In Ganache, click on the "Accounts" tab and select the first account listed, click on the icon of a key, and copy the "Private Key" field.
  
-1. In MetaMask, click on the central dropdown menu, click on "Add account or hardware wallet", select "Import Account", and paste the private key into the private key field. Click "Import".
+4. In MetaMask, click on the central dropdown menu, click on "Add account or hardware wallet", select "Import Account", and paste the private key into the private key field. Click "Import".
 
-1. Add All participate(Raw Material,Supplier,Manufacture,Retail). by following above Step
+5. Add All participate(Raw Material,Supplier,Manufacture,Retail). by following above Step
 
 ### Step 3
 ## Modify the .env file in the client folder
