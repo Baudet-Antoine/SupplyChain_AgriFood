@@ -266,7 +266,7 @@ function showActorRole(arr1, addr, t) {
             cond=true;
         }
     }
-    if (addr === "0x812BEBcB6Caa6668e576f662E6aD3183e7D82686") {
+    if (addr === process.env.REACT_APP_OWNER_ADDRESS) { 
         output.push(t("own"))
     } else if (output.length == 0){
         output.push(t("notReg"));
