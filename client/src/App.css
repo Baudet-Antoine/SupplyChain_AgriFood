@@ -1,0 +1,27 @@
+.main{
+  margin: 10px; 
+  padding-left: 50px;
+  padding-right: 50px;
+}
+.title{
+  text-align: center;
+  font-family: 'Brush Script MT', cursive;
+  font-size: 3em;
+  text-align: center;
+  color: green;
+}
+hr{
+  position: relative;
+  top: 20px;
+  border: none;   
+  height: 5px;
+  background: rgb(0, 0, 0);
+}
+.wait{
+  text-align: center;
+  margin-top: 5rem;
+}
+
+.btn-dark{
+  background-color: rgb(216, 16, 156) !important;
+}
