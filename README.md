@@ -28,9 +28,9 @@ Click "Save".
 
 1. Import an account: In Ganache, click on the "Accounts" tab and select the first account listed, click on the icon of a key, and copy the "Private Key" field.
  
-2. In MetaMask, click on the central dropdown menu, click on "Add account or hardware wallet", select "Import Account", and paste the private key into the private key field. Click "Import".
+1. In MetaMask, click on the central dropdown menu, click on "Add account or hardware wallet", select "Import Account", and paste the private key into the private key field. Click "Import".
 
-3. Add All participate(Raw Material,Supplier,Manufacture,Retail). by following above Step
+1. Add All participate(Raw Material,Supplier,Manufacture,Retail). by following above Step
 
 ### Step 3
 ## Modify the .env file in the client folder
