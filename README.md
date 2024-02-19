@@ -41,9 +41,8 @@ Click "Save".
 ### Step 4.
 ## Create,Compile & Deploy Smart Contract. 
 
-* Download and open the SupplyChain_agriFood project with VScode and open VScode Terimal by Ctrl + ' .
+* Download and open the SupplyChain_agriFood project with VScode and open VScode Terimal then + and select Command Prompt.
 * **Install truffle** : Type the following command and press Enter: `npm install -g truffle`
-* **Install dependencies** : Type the following command and press Enter: `npm i`
 * **File structure for  DApp** : 
   
     **contracts**: This folder contains the Solidity smart contracts for the DApp. The Migrations.sol contract is automatically created by Truffle and is used for managing migrations.
@@ -54,7 +53,7 @@ Click "Save".
 
     **truffle-config.js**: This file contains the configuration for the Truffle project, including the blockchain network to be used and any necessary settings.
 
-    **package.jso**n: This file contains information about the dependencies and scripts used in the project.
+    **package.json**: This file contains information about the dependencies and scripts used in the project.
 
     **package-lock.json**: This file is generated automatically and contains the exact version of each dependency used in the project.
 
@@ -75,7 +74,7 @@ Click "Save".
 
 ### Step 5.
 ## Run DAPP. 
-* Open a second terminal and enter the client folder
+* Open a second terminal (again Command Prompt) and enter the client folder
   * `cd client`
  
 * Install all packages in the package.json file
