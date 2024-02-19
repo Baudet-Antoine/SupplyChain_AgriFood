@@ -41,7 +41,7 @@ Click "Save".
 ### Step 4.
 ## Create,Compile & Deploy Smart Contract. 
 
-* Download and open the SupplyChain_agriFood project with VScode and open VScode Terimal then + and select Command Prompt.
+* Download and open the SupplyChain_agriFood project with VScode and open VScode Terminal then + and select Command Prompt.
 * **Install truffle** : Type the following command and press Enter: `npm install -g truffle`
 * **File structure for  DApp** : 
   
