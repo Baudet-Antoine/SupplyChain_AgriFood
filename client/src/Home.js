@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from "react-router-dom"
 import Web3 from "web3";
 import SupplyChainABI from "./artifacts/SupplyChain.json"
-import Modal from 'react-overlays/Modal';
+import Modal from 'react-bootstrap/Modal';
 import Select, { components } from 'react-select';
 import Button from 'react-bootstrap/Button';
 import { useTranslation } from "react-i18next";
@@ -143,6 +143,7 @@ function Home() {
             </h4>
 
             <Modal show={show} onHide={handleClose}>
+                {console.log('ciao')}
                 <Modal.Header closeButton>
                     <Modal.Title>{t("showTitle")}</Modal.Title>
                 </Modal.Header>

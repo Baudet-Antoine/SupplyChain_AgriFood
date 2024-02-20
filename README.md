@@ -86,8 +86,8 @@ Click "Save".
   * `npm install -save react-router-dom`
   * `npm install -save react-i18next`
   * `npm install -save country-flag-icons`
-  * `npm install -save react-overlays`
   * `npm install -save react-bootstrap`
+  * `npm install -save axios` 
 
 * Run this Command :
   * `npm`

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
-import Modal from 'react-overlays/Modal';
+import Modal from 'react-bootstrap/Modal';
 import { useNavigate } from "react-router-dom"
 import Web3 from "web3";
 import SupplyChainABI from "./artifacts/SupplyChain.json"
