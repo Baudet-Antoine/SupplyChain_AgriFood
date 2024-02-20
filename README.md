@@ -11,7 +11,7 @@
 * **Pinata**: Create an account from https://www.pinata.cloud/ , then create a new API key from your account and save the data of that key.
 
 ### Step 2.
-## Connect Meta Musk with Ganache. 
+## Connect MetaMask with Ganache. 
 
 1. Start Ganache: Start the Ganache application and make note of the RPC server URL and port number.
 
