@@ -250,7 +250,7 @@ contract SupplyChain{
         delete LotStock[_absoluteId];
     }
 
-    function transform(uint256[] memory _source, string memory _location, uint256 _duration, string memory hashFileAction) public {
+    function transform(uint256[] memory _source, uint256 _idProd, uint256 _size, string memory _location, uint256 _duration, string memory hashFileAction) public {
         bool cond=false;
         uint256[] memory sink = new uint256[](1);
         for(uint256 i=0; i<=manLotCtr; i++){
@@ -258,30 +258,21 @@ contract SupplyChain{
                 cond=true;
             }
         }
-        //require(cond);
         LotStock[ManLotStock[_source[0]].absolute_id].active=false;
         actionCtr++;
         manLotCtr++;
         absoluteCtr++;
         sink[0] = manLotCtr;
-        LotStock[absoluteCtr] = absolute_lot(absoluteCtr, LotStock[ManLotStock[_source[0]].absolute_id].id_product, LotStock[ManLotStock[_source[0]].absolute_id].size, STAGE.Manufacturing, true);
-        ManLotStock[manLotCtr] = lot(manLotCtr, absoluteCtr, LotStock[ManLotStock[_source[0]].absolute_id].id_product, LotStock[ManLotStock[_source[0]].absolute_id].size, _location, msg.sender);
+        LotStock[absoluteCtr] = absolute_lot(absoluteCtr, _idProd, _size, STAGE.Manufacturing, true);
+        ManLotStock[manLotCtr] = lot(manLotCtr, absoluteCtr, _idProd, _size, _location, msg.sender);
         Actions[actionCtr] = action(actionCtr, ACTION_TYPE.Tranformation, _source, sink, _duration, hashFileAction);
     }
 
-    function integrate(uint256[] memory _absoluteIds, string memory _location, uint256 _duration, string memory hashFileAction) public {
-        bool same=true;
-        uint256 index;
+    function integrate(uint256[] memory _absoluteIds, uint256 productId, string memory _location, uint256 _duration, string memory hashFileAction) public {
         uint256 count=0;
         uint256 size = LotStock[_absoluteIds[0]].size;
-        uint256[] memory ingridients = new uint256[](_absoluteIds.length);
         uint256[] memory sink = new uint256[](1);
         uint256[] memory source = new uint256[](_absoluteIds.length);
-        for (uint256 i = 1; i < _absoluteIds.length; i++) {
-            require(LotStock[_absoluteIds[0]].active);
-        }
-
-        ingridients[0] = LotStock[_absoluteIds[0]].id_product;
 
         for(uint256 i=0; i<=manLotCtr; i++){
             for (uint j=0; j < _absoluteIds.length; j++) {
@@ -295,31 +286,16 @@ contract SupplyChain{
 
         for (uint256 i = 0; i < _absoluteIds.length; i++) {
             LotStock[_absoluteIds[i]].active = false;
+            size += LotStock[_absoluteIds[i]].size;  
         }
         
-        for (uint256 i = 1; i < _absoluteIds.length; i++) {
-            if (LotStock[_absoluteIds[i]].id_product != LotStock[_absoluteIds[0]].id_product) same=false;
-            ingridients[i] = LotStock[_absoluteIds[i]].id_product;
-            size += LotStock[_absoluteIds[i]].size;   
-        }
         manLotCtr++;
         absoluteCtr++;
         actionCtr++;
         sink[0] = manLotCtr;
-        if (same){
-            ManLotStock[manLotCtr] = lot(manLotCtr, absoluteCtr, LotStock[_absoluteIds[0]].id_product, size, _location, msg.sender);
-            LotStock[absoluteCtr] = absolute_lot(absoluteCtr, LotStock[_absoluteIds[0]].id_product, size, STAGE.Manufacturing, true);
-        } else {
-            for (uint256 i=0; i<=productCtr; i++){
-                if((ProductStock[i].simple==false) && (checkArray(getProductIngredient(ProductStock[i].id), ingridients))){
-                    same=true;
-                    index = ProductStock[i].id;
-                }
-            }
-            require(same);
-            ManLotStock[manLotCtr] = lot(manLotCtr, absoluteCtr, ProductStock[index].id, size, _location, msg.sender);
-            LotStock[absoluteCtr] = absolute_lot(absoluteCtr, ProductStock[index].id, size, STAGE.Manufacturing, true);
-        }
+        ManLotStock[manLotCtr] = lot(manLotCtr, absoluteCtr, productId, size, _location, msg.sender);
+        LotStock[absoluteCtr] = absolute_lot(absoluteCtr, productId, size, STAGE.Manufacturing, true);
+        
         Actions[actionCtr] = action(actionCtr, ACTION_TYPE.Integration, source, sink, _duration, hashFileAction);
     }
 

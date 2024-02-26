@@ -17,7 +17,7 @@ function PerformAction() {
     } 
 
     const name_ingr = [];
-    const supply_action = [];
+    let supply_action = [];
     const possible_actions = [];
     const item = [];
 
@@ -39,7 +39,7 @@ function PerformAction() {
     const [show, setShow] = useState(false);
     const [actionType, setActionType] = useState();
     const [actionDuration, setActionDuration] = useState();
-    const [absoluteLotId, setAbsoluteLotId] = useState(0);
+    const [absoluteLotId, setAbsoluteLotId] = useState(-1);
     const [supLotStock, setSupLotStock] = useState();
     const [manLotStock, setManLotStock] = useState();
     const [disLotStock, setDisLotStock] = useState();
@@ -47,6 +47,9 @@ function PerformAction() {
     const [possibleIngr, setPossibleIngr] = useState([])
     const [integrationInput, setIntegrationInput] = useState([]);
     const [actionFile, setActionFile] = useState("");
+    const [ingredients, setIngredients] = useState([]);
+    const [title, setTitle] = useState("");
+    const [cond, setCond] = useState(true);
 
     const loadWeb3 = async () => {
         if (window.ethereum) {
@@ -78,8 +81,10 @@ function PerformAction() {
             }
             const prodCtr = await supplychain.methods.productCtr().call();
             const prod = {};
+            const ingr = {}
             for (let i = 0; i < prodCtr; i++) {
                 prod[i] = await supplychain.methods.ProductStock(i + 1).call();
+                ingr[i] = await supplychain.methods.getProductIngredient(i + 1).call();
             }
             const absoluteCtr = await supplychain.methods.absoluteCtr().call();
             const lot = {};
@@ -106,6 +111,7 @@ function PerformAction() {
             for (let i = 0; i < retLotCtr; i++) {
                 retLot[i] = await supplychain.methods.RetLotStock(i + 1).call();
             }
+            setIngredients(ingr);
             setProduct(prod);
             setActors(act);
             setAbsoluteLot(lot);
@@ -170,7 +176,7 @@ function PerformAction() {
         history('/');
     }
     const handlerProductID = (event) => {
-        if(parseInt(event.target.value)>= 1) setProductId(parseInt(event.target.value));
+        if(parseInt(event.target.value)>= 0) setProductId(parseInt(event.target.value));
     }
     const handlerLotSize = (event) => {
         setLotSize(event.target.value);
@@ -195,6 +201,9 @@ function PerformAction() {
             alert(t("errAlert"))
         }
     }
+    
+    const allEqual = arr => arr.every(val => val === arr[0]);
+
     const handleSelectAction = (event) => {
         setActionType(event.target.value);
     }
@@ -206,6 +215,7 @@ function PerformAction() {
     }
     const handleChangeIntegration = (event) => {
         let temp=[];
+        let temp_ingr = [];
         for (let i =0; i<Object.keys(absoluteLot).length; i++){
             if(parseInt(absoluteLot[i].id) == (absoluteLotId+1)) temp.push(parseInt(absoluteLot[i].id));
         }
@@ -213,6 +223,17 @@ function PerformAction() {
             temp.push(parseInt(event[index].absVal));
         }
         setIntegrationInput(temp);
+        for (let i=0; i<temp.length; i++){
+            temp_ingr.push(absoluteLot[parseInt(temp[i])-1].id_product)   
+        }
+        
+        for (let i=0; i<Object.keys(ingredients).length; i++){
+            if(arraysAreEqual(temp_ingr, ingredients[i]) || allEqual(temp_ingr)){
+                setProductId(product[i].id);
+                setCond(true)
+                break;
+            } else setCond(false)
+        } 
     }
     const handleChangeDivision = (event) => {
         setPossibleIngr(Array.from({ length: event.target.value }));
@@ -221,13 +242,15 @@ function PerformAction() {
         item.push(parseInt(event.target.value));
     }
     const handleShow = (event) => {
+        setCond(true)
         let index = parseInt(event.target.value);
+        setTitle(product[parseInt(absoluteLot[index].id_product)-1].name);
         let temp= [];
         setProductId(parseInt(absoluteLot[index].id_product))
         setAbsoluteLotId(index);
         setPossibleIngr([]);
         for (let i = 0; i < Object.keys(absoluteLot).length; i++) {
-            if ((absoluteLot[i].active) && (parseInt(absoluteLot[i].stage) == 1)&& (parseInt(absoluteLot[i].id) != parseInt(absoluteLot[index].id))) {
+            if ((absoluteLot[i].active) && (parseInt(absoluteLot[i].stage) == 1) && (parseInt(absoluteLot[i].id) != parseInt(absoluteLot[index].id))) {
                 temp.push({value: parseInt(product[parseInt(absoluteLot[i].id_product)-1].id), label: product[parseInt(absoluteLot[i].id_product)-1].name, absVal: parseInt(absoluteLot[i].id)});
             }
         }
@@ -257,7 +280,7 @@ function PerformAction() {
         var reciept;
         var index;
         const temp = [];
-        let responseData;
+        let responseData="";
 
         if(actionFile != "") {
             const val = await Promise.all([getHash(actionFile)]).then((values) => {
@@ -294,12 +317,10 @@ function PerformAction() {
                         if (parseInt(manLotStock[i].absolute_id) == (parseInt(absoluteLotId)+1)) index = parseInt(manLotStock[i].id);
                     }
                     temp.push(index);
-                    reciept = await supplyChain.methods.transform(temp, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
-                    break;
-                case 4: // Alteration
+                    reciept = await supplyChain.methods.transform(temp,  productId, lotSize, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
                 case 5: // Integration
-                    reciept = await supplyChain.methods.integrate(integrationInput, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
+                    reciept = await supplyChain.methods.integrate(integrationInput, productId, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
                 case 6: // Division
                     reciept = await supplyChain.methods.division((parseInt(absoluteLotId)+1), item, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
@@ -311,11 +332,11 @@ function PerformAction() {
                     reciept = await supplyChain.methods.sellLot(parseInt(absoluteLotId)+1).send({ from: currentaccount });
                     break;
             }
+            setActionFile("")
             if (reciept) {
                 loadBlockchaindata();
             }
         } catch (err) {
-            console.log(err)
             alert(t("errAlert"))
         }
         setActionType(-1)
@@ -329,7 +350,7 @@ function PerformAction() {
     }
     
     for (let i = 0; i < Object.keys(product).length; i++) {
-        if(product[i].name != "" && product[i].simple){
+        if(product[i].name != ""){
             name_ingr.push({value: product[i].id, label: product[i].name})
         }
     }
@@ -338,24 +359,21 @@ function PerformAction() {
         let man_action = [];
         let dis_action = [];
         let ret_action = [];
-        if(absoluteLotId==0) return [];
+        if(absoluteLotId==-1) return [];
         else{
             switch (parseInt(absoluteLot[absoluteLotId].stage)) {
                 case 0:
-                    supply_action = [{value: 7, label: t("destruction")}]
                     man_action = [
-                        {value: 0, label: t("manufacture")},
-                        {value: 7, label: t("destruction")}
+                        {value: 0, label: t("manufacture")}
                     ]
+                    supply_action = [{value: 7, label: t("destruction")}]
                     break;
             
                 case 1:
                     man_action = [
                         {value: 3, label: t("transformation")},
                         {value: 5, label: t("integration")},
-                        {value: 6, label: t("division")},
-                        {value: 7, label: t("destruction")},
-                    ]
+                        {value: 6, label: t("division")}                    ]
                     dis_action = [
                         {value: 1, label: t("distribute")},
                         {value: 7, label: t("destruction")}
@@ -381,12 +399,14 @@ function PerformAction() {
     const total_actions = displayAction();
 
     for (let i = 0; i < Object.keys(actors).length; i++) {
-        if(actors[i].addr == currentaccount) {
+        if(actors[i].addr == currentaccount && total_actions.length!=0) {
             for (let j=0; j<total_actions[parseInt(actors[i].role)].length; j++){
                 possible_actions.push(total_actions[parseInt(actors[i].role)][j]);
             }
         }
     }
+
+    console.log(actionFile)
 
     return(
         <div className='main'>
@@ -411,7 +431,7 @@ function PerformAction() {
                     <select className="form-select" onChange={handlerProductID} required> 
                         <option value="" defaultValue={'DEFAULT'} >{t("chooseProduct")}</option>
                         {name_ingr.map(function(item){
-                            if (product[parseInt(item.value)-1].simple && product[parseInt(item.value)-1].active) return (<option value={item.value}>{item.label}</option>)
+                            if (product[parseInt(item.value)-1].simple && product[parseInt(item.value)-1].active) return (<option value={parseInt(item.value)}>{item.label}</option>)
                         })}
                     </select>
                 </div> 
@@ -463,7 +483,7 @@ function PerformAction() {
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>{t("manageLot")}: {productId == -1 ? "" : product[parseInt(productId)-1].name}</Modal.Title>
+                    <Modal.Title>{t("manageLot")}: {title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <select className="form-select" onChange={handleSelectAction} required> 
@@ -492,6 +512,20 @@ function PerformAction() {
                     {
                         actionType == 3 && //tranformation
                         <div>
+                            <div className='form mb-3 mt-3'> 
+                                <select className="form-select" onChange={handlerProductID} required> 
+                                    <option value="" defaultValue={'DEFAULT'} >{t("chooseProduct")}</option>
+                                    {name_ingr.map(function(item){
+                                        if ((product[parseInt(item.value)-1].active) && (ingredients[parseInt(item.value)-1].length==1)) {
+                                            if (product[parseInt(item.value)-1].name == product[parseInt(productId)-1].name || ingredients[parseInt(item.value)-1].includes(product[parseInt(productId)-1].id)) return (<option value={parseInt(item.value)}>{item.label}</option>)
+                                        }
+                                    })}
+                                </select>
+                            </div> 
+                            <div className="form-floating mb-3 mt-3">
+                                <input type="number" className="form-control" id="floatingSize" onChange={handlerLotSize} placeholder='ciao' required/>
+                                <label for="floatingSize">{t("sizeLot")}</label>
+                            </div> 
                             <div className="form-floating mb-3 mt-3">
                                 <input type="text" className="form-control" id="floatingLocation" onChange={handlerChangeLocation} placeholder="New location in warehouse" required/>
                                 <label for="floatingLocation">{t("locationLot")}</label>
@@ -518,6 +552,7 @@ function PerformAction() {
                                 classNamePrefix="select"
                                 autoFocus={true} 
                                 onChange={handleChangeIntegration}
+                                required
                             />
                             <div className="form mb-3 mt-3">
                                 <label >{t("locationLot")}</label>
@@ -568,13 +603,34 @@ function PerformAction() {
                     <Button variant="secondary" onClick={handleClose}>
                         {t("close")}
                     </Button>
-                    <Button variant="warning" onClick={handleSaveClose}>
+                    <Button variant="warning" disabled={cond ? false : true} onClick={handleSaveClose}>
                         {t("perform")}
                     </Button>
                 </Modal.Footer>
             </Modal>
         </div>
     )
+}
+
+function arraysAreEqual(arr1, arr2) {
+    // Check if arrays are of same length
+    if (arr1.length !== arr2.length) {
+        return false;
+    }
+
+    // Sort both arrays
+    const sortedArr1 = arr1.slice().sort();
+    const sortedArr2 = arr2.slice().sort();
+
+    // Compare sorted arrays element by element
+    for (let i = 0; i < sortedArr1.length; i++) {
+        if (sortedArr1[i] !== sortedArr2[i]) {
+            return false;
+        }
+    }
+
+    // If all elements are equal, arrays are equal
+    return true;
 }
 
 function showActorRole(arr1, addr, t) {

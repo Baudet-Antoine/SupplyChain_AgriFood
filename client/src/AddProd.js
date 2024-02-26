@@ -117,8 +117,6 @@ function AddProd() {
     const handlerSubmitProduct = async (event) => {
         event.preventDefault();
         const responseData = []
-        console.log('ci')
-        console.log(ingrid)
         try {
             for(let i=0; i<file.length; i++){
                 const val = await Promise.all([getHash(file[i])]).then((values) => {
@@ -127,6 +125,7 @@ function AddProd() {
                 responseData.push(val[0]);
             }
             var reciept = await supplyChain.methods.addProduct(productName, ingrid, responseData).send({ from: currentaccount });
+            setIngrid([])
             if (reciept) {
                 loadBlockchaindata();
             }

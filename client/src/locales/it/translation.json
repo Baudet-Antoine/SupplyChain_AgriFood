@@ -1,5 +1,5 @@
 {
-    "loading": "Caricamen...",
+    "loading": "Caricamento...",
     "ethAlert": "Rilevato browser non Ethereum. Dovresti provare MetaMask!",
     "contractAlert": "Lo smart contract non è distribuito sulla rete attuale",
     "errAlert": "Si è verificato un errore!!!",
