@@ -4,6 +4,7 @@ import Web3 from "web3";
 import SupplyChainABI from "./artifacts/SupplyChain.json"
 import { useTranslation } from "react-i18next";
 import { IT, GB } from 'country-flag-icons/react/3x2'
+import { getAdapter } from 'axios';
 
 function Track() {
 
@@ -127,12 +128,9 @@ function Track() {
             </div>
         )
     }
-
-    console.log(actions)
-    console.log(sources)
-    console.log(sinks)
     
     const getAction = (stage, lotId) => {
+        console.log(lotId)
         
         let tempSources = [];
         let tempStage = [];
@@ -144,11 +142,16 @@ function Track() {
                         count++;
                         switch (stage[count]) {
                             case 0:
-                                return(
-                                    <div>
-                                        {supPart(item)}  
-                                    </div>
-                                )
+                                for(let i=0; i<Object.keys(actions).length; i++){
+                                    if(parseInt(actions[i].actionType) == 7 && sinks[i].includes(supLotStock[parseInt(item)-1].id)){
+                                        return(
+                                            <div>
+                                                {supPart(item,actions[i].id)}
+                                            </div>
+                                        )  
+                                    }
+                                }
+                                break;
                             case 1:
                                 for(let i=0; i<Object.keys(actions).length; i++){
                                     if(parseInt(actions[i].actionType) == 0 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
@@ -250,7 +253,7 @@ function Track() {
         history('/performaction');
     }
 
-    const supPart = (lotId) => {
+    const supPart = (lotId, actionId) => {
         for(let i=0; i<Object.keys(actors).length; i++){
             if(actors[i].addr == supLotStock[parseInt(lotId)-1].actor){
                 actorIndex = parseInt(actors[i].id)-1;
@@ -260,14 +263,24 @@ function Track() {
         let x=0;
         return(
             <div className='mb-4 row'>
-                <div className='col-6'>
+                <div className='col-4'>
                     <p>
                         {t("responsible")} {t("sup")}: <b>{actors[actorIndex].name}</b><br/>
                         {t("locOf")} {t("sup")}: <b>{actors[actorIndex].place}</b><br/>
                         {t("infoOf")} {t("sup")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actors[actorIndex].hashFileActor} target='_blank' rel="noreferrer">{t("read")}</a>
                     </p>
                 </div>
-                <div className='col-6'>
+                <div className='col-4'>
+                    <p>
+                        {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
+                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
+                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
+                            {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
+                        </p>
+
+                    </p>
+                </div>
+                <div className='col-4'>
                     <p>
                         {t("prodLot")}: <b>{product[parseInt(supLotStock[parseInt(lotId)-1].id_product)-1].name}</b><br/>
                         <b>{showStage(0, t)}</b> <br/>
@@ -307,7 +320,7 @@ function Track() {
                 <div className='col-4'>
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{parseInt(actions[parseInt(actionId)-1].duration)} min</b><br/>
+                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
                         <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
@@ -354,7 +367,7 @@ function Track() {
                 <div className='col-4'>
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{parseInt(actions[parseInt(actionId)-1].duration)} min</b><br/>
+                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
                         <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
@@ -400,7 +413,7 @@ function Track() {
                 <div className='col-4'>
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{parseInt(actions[parseInt(actionId)-1].duration)} min</b><br/>
+                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
                         <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
@@ -489,6 +502,8 @@ function showActionType(action, t){
             return t("integration");
         case 6:
             return t("division");
+        case 7:
+            return t("creation");
     }
 }
 
@@ -500,6 +515,15 @@ function showArrow(arr){
             </svg>
         </div>
     )
+}
+
+function getDate(timestamp){
+    var date = new Date(timestamp * 1000);
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    var formattedDate = day + '/' + month + '/' + year;
+    return formattedDate;
 }
 
 export default Track

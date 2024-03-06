@@ -59,7 +59,7 @@
     "track": "Traccia lotto",
     "manageLot": "Gestisci lotto",
     "chooseAction": "Scegli azione",
-    "duration": "Durata dell'azione (in min)",
+    "duration": "Data",
     "describeAction": "Inserire file per descrivere l'azione",
     "describeLot": "Inserire file per descrivere il lotto",
     "lotToTrack": "Lotto da tracciare: ",
@@ -74,5 +74,6 @@
     "chooseProduct": "Scegli il prodotto",
     "selectRole": "Seleziona il ruolo (selezione multipla disponibile)",
     "limit": "Solo il Fornitore può creare un lotto",
-    "limitOwn": "Solo il gestore del sistema può farlo"
+    "limitOwn": "Solo il gestore del sistema può farlo",
+    "creation": "Creazione"
 }

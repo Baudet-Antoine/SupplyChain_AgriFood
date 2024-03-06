@@ -59,7 +59,7 @@
     "track": "Track lot",
     "manageLot": "Manage Lot",
     "chooseAction": "Choose the action",
-    "duration": "Duration of the action (in min)",
+    "duration": "Date",
     "describeAction": "Insert file to describe action",
     "describeLot": "Insert file to describe lot",
     "lotToTrack": "Lot to track: ",
@@ -74,5 +74,6 @@
     "chooseProduct": "Choose the product",
     "selectRole": "Select role (multiple selection available)",
     "limit": "Only Supplier can create lot",
-    "limitOwn": "Only the owner of the system can do it"
+    "limitOwn": "Only the owner of the system can do it",
+    "creation": "Creation"
 }

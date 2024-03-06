@@ -12,11 +12,20 @@ function Show() {
         i18n.changeLanguage(lang);
     } 
 
+    let listLot = {};
+    let listActor = {};
+    let listAction = {};
+    let count = 0;
+
+    listLot[count] = []
+    listAction[count] = []
+    listActor[count] = []
+    
+
     const location = useLocation();
     const temporary = Number(location.state);
     const lotId = []
     lotId.push(temporary)
-    let actorIndex;
     
     const history = useNavigate()
     useEffect(() => {
@@ -127,311 +136,178 @@ function Show() {
         )
     }
 
-    console.log(actions)
-    console.log(sources)
-    console.log(sinks)
-    
-    const getAction = (stage, lotId) => {
-        
-        let tempSources = [];
-        let tempStage = [];
-        let count=-1;
-        if(lotId.length!=0){
-            return(
-                <div>
-                    {lotId.map(function(item){
-                        count++;
-                        switch (stage[count]) {
-                            case 0:
-                                return(
-                                    <div>
-                                        {supPart(item)}  
-                                    </div>
-                                )
-                            case 1:
-                                for(let i=0; i<Object.keys(actions).length; i++){
-                                    if(parseInt(actions[i].actionType) == 0 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
-                                        for(let j=0; j<Object.keys(supLotStock).length; j++){
-                                            if(parseInt(manLotStock[parseInt(item)-1].absolute_id) == parseInt(supLotStock[j].absolute_id)) {
-                                                tempSources.push(supLotStock[j].id);
-                                                tempStage.push(0);
-                                            }
-                                        }
-                                        return(
-                                            <div>
-                                                {manPart(item, actions[i].id)}
-                                            </div>
-                                        )  
-                                    }
-                                    if(parseInt(actions[i].actionType) == 3 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
-                                        for(let j=0; j<sources[i].length; j++){
-                                            tempSources.push(sources[i][j]);
-                                            tempStage.push(1);
-                                        }
-                                        return(
-                                            <div>
-                                                {manPart(item,actions[i].id)}
-                                            </div>
-                                        ) 
-                                    }
-                                    if(parseInt(actions[i].actionType) == 5 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
-                                        for(let j=0; j<sources[i].length; j++){
-                                            tempSources.push(sources[i][j]);
-                                            tempStage.push(1);
-                                        }
-                                        return(
-                                            <div>
-                                                {manPart(item,actions[i].id)}
-                                            </div>
-                                        ) 
-                                    }
-                                    if(parseInt(actions[i].actionType) == 6 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
-                                        for(let j=0; j<sources[i].length; j++){
-                                            tempSources.push(sources[i][j]);
-                                            tempStage.push(1);
-                                        }
-                                        return(
-                                            <div>
-                                                {manPart(item,actions[i].id)}
-                                            </div>
-                                        )  
-                                    }
-                                } 
-                                break;
-                            case 2:
-                                for(let i=0; i<Object.keys(actions).length; i++){
-                                    if(parseInt(actions[i].actionType) == 1 && sinks[i].includes(disLotStock[parseInt(item)-1].id)){
-                                        for(let j=0; j<sources[i].length; j++){
-                                            tempSources.push(sources[i][j]);
-                                            tempStage.push(1);
-                                        }
-                                        return(
-                                            <div>
-                                                {disPart(item,actions[i].id)}
-                                            </div>
-                                        )  
-                                    }
-                                }
-                                break;
-                            case 3:
-                                for(let i=0; i<Object.keys(actions).length; i++){
-                                    if(parseInt(actions[i].actionType) == 2 && sinks[i].includes(retLotStock[parseInt(item)-1].id)){
-                                        for(let j=0; j<sources[i].length; j++){
-                                            tempSources.push(sources[i][j]);
-                                            tempStage.push(2);
-                                        }
-                                        return(
-                                            <div>
-                                                {retPart(item,actions[i].id)}
-                                            </div>
-                                        )  
-                                    }
-                                }
-                                break;
-                            case 4:
-                                tempStage.push(3);
-                                tempSources.push(item)
-                                return(
-                                    <div>
-                                        {soldPart(item)}  
-                                    </div>
-                                )
-                        }
-                    })}
-                    {showArrow(tempStage)}
-                    {getAction(tempStage, tempSources)}
-                </div>
-            )
-        }
-    }
-
     const redirect_to_home = () => {
         history('/');
     }
+    
+    const setArr = (stage, lotId) => {
+        let tempSources = [];
 
-    const supPart = (lotId) => {
-        for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == supLotStock[parseInt(lotId)-1].actor){
-                actorIndex = parseInt(actors[i].id)-1;
-                break;
+        if(lotId.length == 1){
+            let item = lotId[0]
+            switch (stage) {
+                case 0: //supply
+                    listLot[count].push(parseInt(supLotStock[parseInt(item)-1].absolute_id))
+                    for(let i=0; i<Object.keys(actors).length; i++){
+                        if(actors[i].addr == supLotStock[parseInt(lotId)-1].actor){
+                            listActor[count].push(parseInt(actors[i].id))
+                            break;
+                        }
+                    }
+                    for(let i=0; i<Object.keys(actions).length; i++){
+                        if(parseInt(actions[i].actionType) == 7 && sinks[i].includes(supLotStock[parseInt(item)-1].id)){
+                            for(let j=0; j<sources[i].length; j++){
+                                tempSources.push(sources[i][j]);
+                            }
+                            listAction[count].push(parseInt(actions[i].id))
+                            break;
+                        }
+                    }
+                    setArr(1,[])
+                    break;
+                case 1: //manufacture
+                    let tempStage = 0;
+                    listLot[count].push(parseInt(manLotStock[parseInt(item)-1].absolute_id))
+                    for(let i=0; i<Object.keys(actors).length; i++){
+                        if(actors[i].addr == manLotStock[parseInt(lotId)-1].actor){
+                            listActor[count].push(parseInt(actors[i].id))
+                            break;
+                        }
+                    }
+                    for(let i=0; i<Object.keys(actions).length; i++){
+                        if(parseInt(actions[i].actionType) == 0 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
+                            for(let j=0; j<Object.keys(supLotStock).length; j++){
+                                if(parseInt(manLotStock[parseInt(item)-1].absolute_id) == parseInt(supLotStock[j].absolute_id)) {
+                                    tempSources.push(supLotStock[j].id);
+                                    tempStage = 0;
+                                }
+                            }
+                            listAction[count].push(parseInt(actions[i].id))
+                            break;
+                        }
+                        if(parseInt(actions[i].actionType) == 3 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
+                            for(let j=0; j<sources[i].length; j++){
+                                tempSources.push(sources[i][j]);
+                                tempStage = 1;
+                            }
+                            listAction[count].push(parseInt(actions[i].id))
+                            break;
+                        }
+                        if(parseInt(actions[i].actionType) == 5 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
+                            for(let j=0; j<sources[i].length; j++){
+                                tempSources.push(sources[i][j]);
+                                tempStage = 1;
+                            }
+                            listAction[count].push(parseInt(actions[i].id))
+                            break;
+                        }
+                        if(parseInt(actions[i].actionType) == 6 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
+                            for(let j=0; j<sources[i].length; j++){
+                                tempSources.push(sources[i][j]);
+                                tempStage = 1;
+                            }
+                            listAction[count].push(parseInt(actions[i].id))
+                            break; 
+                        }
+                    }
+                    setArr(tempStage,tempSources)
+                    break;
+    
+                case 2: //distribute
+                    listLot[count].push(parseInt(disLotStock[parseInt(item)-1].absolute_id))
+                    for(let i=0; i<Object.keys(actors).length; i++){
+                        if(actors[i].addr == disLotStock[parseInt(lotId)-1].actor){
+                            listActor[count].push(parseInt(actors[i].id))
+                            break;
+                        }
+                    }
+                    for(let i=0; i<Object.keys(actions).length; i++){
+                        if(parseInt(actions[i].actionType) == 1 && sinks[i].includes(disLotStock[parseInt(item)-1].id)){
+                            for(let j=0; j<sources[i].length; j++){
+                                tempSources.push(sources[i][j]);
+                            }
+                            listAction[count].push(parseInt(actions[i].id))
+                            break;
+                        }
+                    }
+                    setArr(1,tempSources)
+                    break;
+    
+                case 3: //retil
+                    listLot[count].push(parseInt(retLotStock[parseInt(item)-1].absolute_id))
+                    for(let i=0; i<Object.keys(actors).length; i++){
+                        if(actors[i].addr == retLotStock[parseInt(lotId)-1].actor){
+                            listActor[count].push(parseInt(actors[i].id))
+                            break;
+                        }
+                    }
+                    for(let i=0; i<Object.keys(actions).length; i++){
+                        if(parseInt(actions[i].actionType) == 2 && sinks[i].includes(retLotStock[parseInt(item)-1].id)){
+                            for(let j=0; j<sources[i].length; j++){
+                                tempSources.push(sources[i][j]);
+                            }
+                            listAction[count].push(parseInt(actions[i].id))
+                            break;
+                        }
+                    }
+                    setArr(2,tempSources)
+                    break;
             }
         }
-        let x=0;
-        return(
-            <div className='mb-4 row'>
-                <div className='col-6'>
-                    <p>
-                        {t("responsible")} {t("sup")}: <b>{actors[actorIndex].name}</b><br/>
-                        {t("locOf")} {t("sup")}: <b>{actors[actorIndex].place}</b><br/>
-                        {t("infoOf")} {t("sup")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actors[actorIndex].hashFileActor} target='_blank' rel="noreferrer">{t("read")}</a>
-                    </p>
-                </div>
-                <div className='col-6'>
-                    <p>
-                        {t("prodLot")}: <b>{product[parseInt(supLotStock[parseInt(lotId)-1].id_product)-1].name}</b><br/>
-                        <b>{showStage(0, t)}</b> <br/>
-                        {t("prod")}  <b>{product[parseInt(parseInt(supLotStock[parseInt(lotId)-1].id_product))-1].simple ? "Simple" : "Complex"}</b> <br/>
-                        {t("currentWeight")} <b>{parseInt(supLotStock[parseInt(lotId)-1].size)} Kg</b><br/>
-                        {t("locationLot")}: <b>{supLotStock[parseInt(lotId)-1].location}</b><br/>
-                        {Object.values(hashProd[parseInt(product[parseInt(supLotStock[parseInt(lotId)-1].id_product)-1].id)-1]).map(function (keys) {
-                            x++;
-                            return(
-                                <div>
-                                    File {x}: <a href={'https://gateway.pinata.cloud/ipfs/'+ keys} target='_blank' rel="noreferrer">{t("read")}</a>
-                                </div>
-                            )
-                        })}
-                    </p>
-                </div>
-            </div>
-        )
-    }
-    const manPart = (lotId, actionId) => {
-        for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == manLotStock[parseInt(lotId)-1].actor){
-                actorIndex = parseInt(actors[i].id)-1;
-                break;
+        if(lotId.length > 1){
+            for(let i=0; i<lotId.length; i++){
+                count = count+1
+                listLot[count] = []
+                listAction[count] = []
+                listActor[count] = []
+                setArr(1, [lotId[i]])
             }
         }
-        let x=0;
-        return(
-            <div className='mb-4 row'>
-                <div className='col-4'>
-                    <p>
-                        {t("responsible")} {t("man")}: <b>{actors[actorIndex].name}</b><br/>
-                        {t("locOf")} {t("man")}: <b>{actors[actorIndex].place}</b><br/>
-                        {t("infoOf")} {t("man")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actors[actorIndex].hashFileActor} target='_blank' rel="noreferrer">{t("read")}</a>
-                    </p>
-                </div>
-                <div className='col-4'>
-                    <p>
-                        {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{parseInt(actions[parseInt(actionId)-1].duration)} min</b><br/>
-                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
-                            {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
-                        </p>
-                    </p>
-                </div>
-                <div className='col-4'>
-                    <p>
-                        {t("prodLot")}: <b>{product[parseInt(manLotStock[parseInt(lotId)-1].id_product)-1].name}</b><br/>
-                        <b>{showStage(1, t)}</b> <br/>
-                        {t("prod")}  <b>{product[parseInt(parseInt(manLotStock[parseInt(lotId)-1].id_product))-1].simple ? "Simple" : "Complex"}</b> <br/>
-                        {t("currentWeight")} <b>{parseInt(manLotStock[parseInt(lotId)-1].size)} Kg</b><br/>
-                        {t("locationLot")}: <b>{manLotStock[parseInt(lotId)-1].location}</b><br/>
-                        {Object.values(hashProd[parseInt(product[parseInt(manLotStock[parseInt(lotId)-1].id_product)-1].id)-1]).map(function (keys) {
-                            x++;
-                            return(
-                                <div>
-                                    File {x}: <a href={'https://gateway.pinata.cloud/ipfs/'+ keys} target='_blank' rel="noreferrer">{t("read")}</a>
-                                </div>
-                            )
-                        })}
-                    </p>
-                </div>
-            </div>
-        )
-    }
-    const disPart = (lotId, actionId) => {
-        for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == disLotStock[parseInt(lotId)-1].actor){
-                actorIndex = parseInt(actors[i].id)-1;
-                break;
-            }
-        }
-        let x=0;
-        return(
-            <div className='mb-4 row'>
-                <div className='col-4'>
-                    <p>
-                        {t("responsible")} {t("dis")}: <b>{actors[actorIndex].name}</b><br/>
-                        {t("locOf")} {t("dis")}: <b>{actors[actorIndex].place}</b><br/>
-                        {t("infoOf")} {t("dis")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actors[actorIndex].hashFileActor} target='_blank' rel="noreferrer">{t("read")}</a>
-                    </p>
-                </div>
-                <div className='col-4'>
-                    <p>
-                        {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{parseInt(actions[parseInt(actionId)-1].duration)} min</b><br/>
-                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
-                            {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
-                        </p>
-                    </p>
-                </div>
-                <div className='col-4'>
-                    <p>
-                        {t("prodLot")}: <b>{product[parseInt(disLotStock[parseInt(lotId)-1].id_product)-1].name}</b><br/>
-                        <b>{showStage(2, t)}</b> <br/>
-                        {t("prod")}  <b>{product[parseInt(parseInt(disLotStock[parseInt(lotId)-1].id_product))-1].simple ? "Simple" : "Complex"}</b> <br/>
-                        {t("currentWeight")} <b>{parseInt(disLotStock[parseInt(lotId)-1].size)} Kg</b><br/>
-                        {t("locationLot")}: <b>{disLotStock[parseInt(lotId)-1].location}</b><br/>
-                        {Object.values(hashProd[parseInt(product[parseInt(disLotStock[parseInt(lotId)-1].id_product)-1].id)-1]).map(function (keys) {
-                            x++;
-                            return(
-                                <div>
-                                    File {x}: <a href={'https://gateway.pinata.cloud/ipfs/'+ keys} target='_blank' rel="noreferrer">{t("read")}</a>
-                                </div>
-                            )
-                        })}
-                    </p>
-                </div>
-            </div>
-        )
-    }
-    const retPart = (lotId, actionId) => {
-        for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == retLotStock[parseInt(lotId)-1].actor){
-                actorIndex = parseInt(actors[i].id)-1;
-                break;
-            }
-        }
-        let x=0;
-        return(
-            <div className='mb-4 row'>
-                <div className='col-4'>
-                    <p>
-                        {t("responsible")} {t("ret")}: <b>{actors[actorIndex].name}</b><br/>
-                        {t("locOf")} {t("ret")}: <b>{actors[actorIndex].place}</b><br/>
-                        {t("infoOf")} {t("ret")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actors[actorIndex].hashFileActor} target='_blank' rel="noreferrer">{t("read")}</a>
-                    </p>
-                </div>
-                <div className='col-4'>
-                    <p>
-                        {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{parseInt(actions[parseInt(actionId)-1].duration)} min</b><br/>
-                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
-                            {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
-                        </p>
-                    </p>
-                </div>
-                <div className='col-4'>
-                    <p>
-                        {t("prodLot")}: <b>{product[parseInt(retLotStock[parseInt(lotId)-1].id_product)-1].name}</b><br/>
-                        <b>{showStage(3, t)}</b> <br/>
-                        {t("prod")}  <b>{product[parseInt(parseInt(retLotStock[parseInt(lotId)-1].id_product))-1].simple ? "Simple" : "Complex"}</b> <br/>
-                        {t("currentWeight")} <b>{parseInt(retLotStock[parseInt(lotId)-1].size)} Kg</b><br/>
-                        {t("locationLot")}: <b>{retLotStock[parseInt(lotId)-1].location}</b><br/>
-                        {Object.values(hashProd[parseInt(product[parseInt(retLotStock[parseInt(lotId)-1].id_product)-1].id)-1]).map(function (keys) {
-                            x++;
-                            return(
-                                <div>
-                                    File {x}: <a href={'https://gateway.pinata.cloud/ipfs/'+ keys} target='_blank' rel="noreferrer">{t("read")}</a>
-                                </div>
-                            )
-                        })}
-                    </p>
-                </div>
-            </div>
-        )
-    }
-    const soldPart = () => {
-        return(
-            <div className='pb-1 pt-2 mb-4' style={{background: 'green', color: 'yellow', textAlign: 'center'}}>
-                <h3>{t("sold")}</h3>
-            </div>
-        )
+                  
     }
 
+    const getAction = (stage, lotId)  => {
+        setArr(stage, lotId)
+        return(
+            <div className="container">
+                {Object.keys(listLot).map(function(key){
+                    return(
+                        <div className="row mb-5">
+                            <div className="col-md-12">
+                                <div id="content">
+                                    <ul className="timeline">
+                                        {Object.keys(listLot[key]).map(function (k){
+                                            return(
+                                                <div>
+                                                     <li className="event" data-date={getDate(parseInt(actions[listAction[key][k]-1].timestamp))}>
+                                                        <h2>{product[parseInt(absoluteLot[listLot[key][k]-1].id_product)-1].name}</h2>
+                                                        <p>
+                                                            {actors[listActor[key][k]-1].name}, <a href={'https://gateway.pinata.cloud/ipfs/'+ actors[listActor[key][k]-1].hashFileActor} target='_blank' rel="noreferrer">{t("read")}</a> <br/>
+                                                            {actors[listActor[key][k]-1].place} <br/>
+                                                            Ottenuto con azione di {showActionType(actions[listAction[key][k]-1].actionType, t)} <br/>
+                                                            {Object.values(hashProd[parseInt(product[parseInt(absoluteLot[listLot[key][k]-1].id_product)-1].id)-1]).map(function (keys) {
+                                                                return(
+                                                                    <div>
+                                                                        Info prodotto: <a href={'https://gateway.pinata.cloud/ipfs/'+ keys} target='_blank' rel="noreferrer">{t("read")}</a>
+                                                                    </div>
+                                                                )
+                                                            })}
+                                                        </p> <br/>
+                                                    </li>
+                                                </div>
+                                            )
+                                        })}
+                                       
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )
+                })}
+            </div>
+        )
+    }
+    
     return(
         <div className='main mb-5'>
             <dev className='container'>
@@ -443,32 +319,16 @@ function Show() {
             <br /><br/>
             
             <h1>{t("lotToTrack")} {product[parseInt(retLotStock[temporary-1].id_product)-1].name}</h1>
-            <p>
-            {t("currentWeight")} <b> {parseInt(absoluteLot[parseInt(retLotStock[temporary-1].absolute_id)-1].size)} Kg </b><br/>
-                Status: <b> {showStage(4, t)}</b> <br/>
-            </p>
-
+           
             <div className="h4 pb-4 mb-4 border-bottom border-dark"></div>
+            <br/>
 
-            {getAction([4], lotId)}
+            {getAction(3, lotId)}
+
+
         </div>
     )
     
-}
-
-function showStage(stage, t){
-    switch(stage) {
-        case 0:
-            return (t("stage")+" "+t("sup"));
-        case 1:
-            return (t("stage")+" "+t("man"));
-        case 2:
-            return (t("stage")+" "+t("dis"));
-        case 3:
-            return (t("stage")+" "+t("ret"));
-        case 4:
-            return (t("sold"));
-    }
 }
 
 function showActionType(action, t){
@@ -487,17 +347,19 @@ function showActionType(action, t){
             return t("integration");
         case 6:
             return t("division");
+        case 7:
+            return t("creation");
     }
 }
 
-function showArrow(arr){
-    if(arr.length != 0) return(
-        <div style={{textAlign: "center", justifyContent: "center"}}>
-            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" className="mb-5 bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
-                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z"/>
-            </svg>
-        </div>
-    )
+
+function getDate(timestamp){
+    var date = new Date(timestamp * 1000);
+    var day = date.getDate();
+    var month = date.getMonth() + 1;
+    var year = date.getFullYear();
+    var formattedDate = day + '/' + month + '/' + year;
+    return formattedDate;
 }
 
 export default Show
