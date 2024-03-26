@@ -18,6 +18,7 @@ function PerformAction() {
 
     const name_ingr = [];
     let supply_action = [];
+    let weights = [];
     const possible_actions = [];
     const item = [];
 
@@ -238,9 +239,7 @@ function PerformAction() {
     const handleChangeDivision = (event) => {
         setPossibleIngr(Array.from({ length: event.target.value }));
     }
-    const handleNewWeights = (event) => {
-        item.push(parseInt(event.target.value));
-    }
+
     const handleShow = (event) => {
         setCond(true)
         let index = parseInt(event.target.value);
@@ -259,7 +258,8 @@ function PerformAction() {
     }
     const handleClose = () => {
         setActionType(-1);
-        setShow(false)};
+        setShow(false)
+    };
     const getHash = async (file) => {
         const actionFileData = new FormData();
         actionFileData.append("file", file);
@@ -323,7 +323,9 @@ function PerformAction() {
                     reciept = await supplyChain.methods.integrate(integrationInput, productId, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
                 case 6: // Division
-                    reciept = await supplyChain.methods.division((parseInt(absoluteLotId)+1), item, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
+                    console.log(weights)
+                    reciept = await supplyChain.methods.division((parseInt(absoluteLotId)+1), weights, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
+                    weights=[]
                     break;
                 case 7: // Destruction
                     reciept = await supplyChain.methods.destruction(parseInt(absoluteLotId)+1).send({ from: currentaccount });  
@@ -405,8 +407,6 @@ function PerformAction() {
             }
         }
     }
-
-    console.log(actionFile)
 
     return(
         <div className='main'>
@@ -592,7 +592,7 @@ function PerformAction() {
                             {possibleIngr.map((_, index) => (
                                 <div key={index}>
                                     <label>Weight (Kg) of new lot #{index + 1}</label>
-                                    <input className="mt-2 ms-2" type="number" onChange={handleNewWeights} required />
+                                    <input className="mt-2 ms-2" type="number" onChange={(e)=>weights[index]=parseInt(e.target.value)} required />
                                     <br/>
                                 </div>
                             ))}

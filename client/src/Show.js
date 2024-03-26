@@ -136,8 +136,8 @@ function Show() {
         )
     }
 
-    const redirect_to_home = () => {
-        history('/');
+    const redirect_to_ClientHome = () => {
+        history('/client');
     }
     
     const setArr = (stage, lotId) => {
@@ -311,7 +311,7 @@ function Show() {
     return(
         <div className='main mb-5'>
             <dev className='container'>
-                <button onClick={redirect_to_home} className="ms-4 btn btn-danger" style={{ position: 'absolute', left: '35px', top: '40px' }}>HOME</button>
+                <button onClick={redirect_to_ClientHome} className="ms-4 btn btn-danger" style={{ position: 'absolute', left: '35px', top: '40px' }}>HOME</button>
                 <h1 className='title'>Supply Chain</h1>
                 <GB title="English" type='button' onClick={() => handleChangeLanguage("en")}  style={{position: 'absolute', right: '55px', top: '45px', height: '30px'}}/>
                 <IT title="Italiano" type='button' onClick={() => handleChangeLanguage("it")}  style={{position: 'absolute', right: '120px', top: '45px', height: '30px'}}/>

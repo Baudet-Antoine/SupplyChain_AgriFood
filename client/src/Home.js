@@ -91,7 +91,6 @@ function Home() {
         history('/performaction')
     }
     const redirect_to_show = () => {
-        console.log(retID)
         history("/show", {state: retID});
     }
     const handleShow = () => {
@@ -136,11 +135,11 @@ function Home() {
                 {t("managerLabel")}
                 <button onClick={redirect_to_performaction} className="ms-4 btn btn-outline-primary">{t("manageButton")}</button>
             </h4>
-            <div className="h4 pb-5 mb-5 border-bottom border-dark"></div>
+            {/* <div className="h4 pb-5 mb-5 border-bottom border-dark"></div>
             <h4>
                 {t("showLabel")}
                 <button onClick={handleShow} className="ms-4 btn btn-outline-primary">{t("showButton")}</button>
-            </h4>
+            </h4> */}
 
             <Modal show={show} onHide={handleClose}>
                 {console.log('ciao')}

@@ -273,7 +273,7 @@ function Track() {
                 <div className='col-4'>
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
+                        {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
                         <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
@@ -320,7 +320,7 @@ function Track() {
                 <div className='col-4'>
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
+                        {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
                         <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
@@ -367,7 +367,7 @@ function Track() {
                 <div className='col-4'>
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
+                        {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
                         <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
@@ -413,7 +413,7 @@ function Track() {
                 <div className='col-4'>
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
-                        {t("duration")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
+                        {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
                         <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>

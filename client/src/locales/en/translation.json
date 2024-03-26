@@ -59,7 +59,8 @@
     "track": "Track lot",
     "manageLot": "Manage Lot",
     "chooseAction": "Choose the action",
-    "duration": "Date",
+    "duration": "Duration",
+    "date": "Date",
     "describeAction": "Insert file to describe action",
     "describeLot": "Insert file to describe lot",
     "lotToTrack": "Lot to track: ",
@@ -75,5 +76,8 @@
     "selectRole": "Select role (multiple selection available)",
     "limit": "Only Supplier can create lot",
     "limitOwn": "Only the owner of the system can do it",
-    "creation": "Creation"
+    "creation": "Creation",
+    "attention": "There is no lot sold with this identifier",
+    "label": "Enter the identifier of the purchased product",
+    "past": "Show history of a product"
 }

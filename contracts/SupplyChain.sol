@@ -314,7 +314,7 @@ contract SupplyChain{
         for (uint256 i=0; i<_sizes.length; i++){
             sum += _sizes[i];
         }   
-        require(sum == LotStock[_absLotId].size);
+        require(sum <= LotStock[_absLotId].size);
         for (uint256 i=0; i<=manLotCtr; i++){
             if((LotStock[ManLotStock[i].absolute_id].active==true) && (ManLotStock[i].absolute_id == _absLotId)) {
                 require(ManLotStock[i].actor==msg.sender);

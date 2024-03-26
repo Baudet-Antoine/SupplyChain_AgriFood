@@ -59,7 +59,8 @@
     "track": "Traccia lotto",
     "manageLot": "Gestisci lotto",
     "chooseAction": "Scegli azione",
-    "duration": "Data",
+    "duration": "Durata",
+    "date": "Data",
     "describeAction": "Inserire file per descrivere l'azione",
     "describeLot": "Inserire file per descrivere il lotto",
     "lotToTrack": "Lotto da tracciare: ",
@@ -75,5 +76,8 @@
     "selectRole": "Seleziona il ruolo (selezione multipla disponibile)",
     "limit": "Solo il Fornitore può creare un lotto",
     "limitOwn": "Solo il gestore del sistema può farlo",
-    "creation": "Creazione"
+    "creation": "Creazione",
+    "attention": "Non esiste un lotto venduto con questo identificatore",
+    "label": "Inserisci identificatore del prodotto acquistato",
+    "past": "Mostra storico di un prodotto"
 }
