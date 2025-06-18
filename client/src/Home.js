@@ -57,7 +57,7 @@ function Home() {
             const lot = {};
             for (let i = 0; i < lotCtr; i++) {
                 lot[i] = await supplychain.methods.LotStock(i + 1).call();
-                if (parseInt(lot[i].stage) == 4) {
+                if (parseInt(lot[i].stage) === 4) {
                     ids.push({value: lot[i].id, label: prod[parseInt(lot[i].id_product)-1].name})
                 }
             }
@@ -100,7 +100,7 @@ function Home() {
     const handleSelection = (event) => {
         setSelectedID(parseInt(event.value));
         for(let i=0; i<Object.keys(retLotStock).length; i++){
-            if (retLotStock[i].absolute_id == event.value) {
+            if (retLotStock[i].absolute_id === event.value) {
                 setRetID(parseInt(retLotStock[i].id));
                 break;
             }

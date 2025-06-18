@@ -143,19 +143,19 @@ function Show() {
     const setArr = (stage, lotId) => {
         let tempSources = [];
 
-        if(lotId.length == 1){
+        if(lotId.length === 1){
             let item = lotId[0]
             switch (stage) {
                 case 0: //supply
                     listLot[count].push(parseInt(supLotStock[parseInt(item)-1].absolute_id))
                     for(let i=0; i<Object.keys(actors).length; i++){
-                        if(actors[i].addr == supLotStock[parseInt(lotId)-1].actor){
+                        if(actors[i].addr === supLotStock[parseInt(lotId)-1].actor){
                             listActor[count].push(parseInt(actors[i].id))
                             break;
                         }
                     }
                     for(let i=0; i<Object.keys(actions).length; i++){
-                        if(parseInt(actions[i].actionType) == 7 && sinks[i].includes(supLotStock[parseInt(item)-1].id)){
+                        if(parseInt(actions[i].actionType) === 7 && sinks[i].includes(supLotStock[parseInt(item)-1].id)){
                             for(let j=0; j<sources[i].length; j++){
                                 tempSources.push(sources[i][j]);
                             }
@@ -169,15 +169,15 @@ function Show() {
                     let tempStage = 0;
                     listLot[count].push(parseInt(manLotStock[parseInt(item)-1].absolute_id))
                     for(let i=0; i<Object.keys(actors).length; i++){
-                        if(actors[i].addr == manLotStock[parseInt(lotId)-1].actor){
+                        if(actors[i].addr === manLotStock[parseInt(lotId)-1].actor){
                             listActor[count].push(parseInt(actors[i].id))
                             break;
                         }
                     }
                     for(let i=0; i<Object.keys(actions).length; i++){
-                        if(parseInt(actions[i].actionType) == 0 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
+                        if(parseInt(actions[i].actionType) === 0 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
                             for(let j=0; j<Object.keys(supLotStock).length; j++){
-                                if(parseInt(manLotStock[parseInt(item)-1].absolute_id) == parseInt(supLotStock[j].absolute_id)) {
+                                if(parseInt(manLotStock[parseInt(item)-1].absolute_id) === parseInt(supLotStock[j].absolute_id)) {
                                     tempSources.push(supLotStock[j].id);
                                     tempStage = 0;
                                 }
@@ -185,7 +185,7 @@ function Show() {
                             listAction[count].push(parseInt(actions[i].id))
                             break;
                         }
-                        if(parseInt(actions[i].actionType) == 3 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
+                        if(parseInt(actions[i].actionType) === 3 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
                             for(let j=0; j<sources[i].length; j++){
                                 tempSources.push(sources[i][j]);
                                 tempStage = 1;
@@ -193,7 +193,7 @@ function Show() {
                             listAction[count].push(parseInt(actions[i].id))
                             break;
                         }
-                        if(parseInt(actions[i].actionType) == 5 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
+                        if(parseInt(actions[i].actionType) === 5 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
                             for(let j=0; j<sources[i].length; j++){
                                 tempSources.push(sources[i][j]);
                                 tempStage = 1;
@@ -201,7 +201,7 @@ function Show() {
                             listAction[count].push(parseInt(actions[i].id))
                             break;
                         }
-                        if(parseInt(actions[i].actionType) == 6 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
+                        if(parseInt(actions[i].actionType) === 6 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
                             for(let j=0; j<sources[i].length; j++){
                                 tempSources.push(sources[i][j]);
                                 tempStage = 1;
@@ -216,13 +216,13 @@ function Show() {
                 case 2: //distribute
                     listLot[count].push(parseInt(disLotStock[parseInt(item)-1].absolute_id))
                     for(let i=0; i<Object.keys(actors).length; i++){
-                        if(actors[i].addr == disLotStock[parseInt(lotId)-1].actor){
+                        if(actors[i].addr === disLotStock[parseInt(lotId)-1].actor){
                             listActor[count].push(parseInt(actors[i].id))
                             break;
                         }
                     }
                     for(let i=0; i<Object.keys(actions).length; i++){
-                        if(parseInt(actions[i].actionType) == 1 && sinks[i].includes(disLotStock[parseInt(item)-1].id)){
+                        if(parseInt(actions[i].actionType) === 1 && sinks[i].includes(disLotStock[parseInt(item)-1].id)){
                             for(let j=0; j<sources[i].length; j++){
                                 tempSources.push(sources[i][j]);
                             }
@@ -236,13 +236,13 @@ function Show() {
                 case 3: //retil
                     listLot[count].push(parseInt(retLotStock[parseInt(item)-1].absolute_id))
                     for(let i=0; i<Object.keys(actors).length; i++){
-                        if(actors[i].addr == retLotStock[parseInt(lotId)-1].actor){
+                        if(actors[i].addr === retLotStock[parseInt(lotId)-1].actor){
                             listActor[count].push(parseInt(actors[i].id))
                             break;
                         }
                     }
                     for(let i=0; i<Object.keys(actions).length; i++){
-                        if(parseInt(actions[i].actionType) == 2 && sinks[i].includes(retLotStock[parseInt(item)-1].id)){
+                        if(parseInt(actions[i].actionType) === 2 && sinks[i].includes(retLotStock[parseInt(item)-1].id)){
                             for(let j=0; j<sources[i].length; j++){
                                 tempSources.push(sources[i][j]);
                             }

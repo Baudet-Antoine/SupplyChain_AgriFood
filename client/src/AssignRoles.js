@@ -163,7 +163,7 @@ function AssignRoles() {
                 <div className="form mb-3">
                     <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files[0])} required/>
                 </div>
-                <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) != t("own")) ? t("limitOwn") : ""}>
+                <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) !== t("own")) ? t("limitOwn") : ""}>
                     <button className="btn btn-warning"  disabled={(showActorRole(actors, currentaccount, t).includes(t("own"))) ? false : true} onSubmit={handlerSubmitACT} style={{width: '10cm', fontWeight: 'bold'}}>{t("registerButton")}</button>
                 </div>  
             </form>
@@ -207,7 +207,7 @@ function showActorRole(arr1, addr, t) {
     var possibility = [t("sup"), t("man"), t("dis"), t("ret")];
     var output=[];
     for (let index = 0; index < Object.keys(arr1).length; index++) {
-        if (arr1[index].addr == addr){
+        if (arr1[index].addr === addr){
             if (cond) output.push( " / ");
             output.push(possibility[arr1[index].role]);
             cond=true;
@@ -215,7 +215,7 @@ function showActorRole(arr1, addr, t) {
     }
     if (addr === process.env.REACT_APP_OWNER_ADDRESS) {
         output.push(t("own"))
-    } else if (output.length == 0){
+    } else if (output.length === 0){
         output.push(t("notReg"));
     }
     return output;

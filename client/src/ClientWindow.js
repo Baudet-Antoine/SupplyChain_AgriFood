@@ -70,7 +70,7 @@ function ClientWindow() {
     const redirect_to_show = () => {
         let cond=false;
         for (let i = 0; i < Object.keys(absoluteLot).length; i++) {
-            if(parseInt(absoluteLot[i].id) == retID && parseInt(absoluteLot[i].stage)==4) {
+            if(parseInt(absoluteLot[i].id) === retID && parseInt(absoluteLot[i].stage)===4) {
                 cond=true;
                 break;
             }

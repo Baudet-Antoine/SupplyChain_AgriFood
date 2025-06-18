@@ -140,7 +140,7 @@ function PerformAction() {
         switch (parseInt(absoluteLot[event.target.value].stage)) {
             case 0:
                 for(let i=0; i<Object.keys(supLotStock).length; i++){
-                    if(parseInt(supLotStock[i].absolute_id) == (parseInt(event.target.value)+1)){
+                    if(parseInt(supLotStock[i].absolute_id) === (parseInt(event.target.value)+1)){
                         arr[1] = parseInt(supLotStock[i].id);
                         break;
                     }
@@ -148,7 +148,7 @@ function PerformAction() {
                 break;
             case 1:
                 for(let i=0; i<Object.keys(manLotStock).length; i++){
-                    if(parseInt(manLotStock[i].absolute_id) == (parseInt(event.target.value)+1)){
+                    if(parseInt(manLotStock[i].absolute_id) === (parseInt(event.target.value)+1)){
                         arr[1] = parseInt(manLotStock[i].id);
                         break;
                     }
@@ -156,7 +156,7 @@ function PerformAction() {
                 break;
             case 2:
                 for(let i=0; i<Object.keys(disLotStock).length; i++){
-                    if(parseInt(disLotStock[i].absolute_id) == (parseInt(event.target.value)+1)){
+                    if(parseInt(disLotStock[i].absolute_id) === (parseInt(event.target.value)+1)){
                         arr[1] = parseInt(disLotStock[i].id);
                         break;
                     }
@@ -164,7 +164,7 @@ function PerformAction() {
                 break;
             case 3: case 4:
                 for(let i=0; i<Object.keys(retLotStock).length; i++){
-                    if(parseInt(retLotStock[i].absolute_id) == (parseInt(event.target.value)+1)){
+                    if(parseInt(retLotStock[i].absolute_id) === (parseInt(event.target.value)+1)){
                         arr[1] = parseInt(retLotStock[i].id);
                         break;
                     }
@@ -218,7 +218,7 @@ function PerformAction() {
         let temp=[];
         let temp_ingr = [];
         for (let i =0; i<Object.keys(absoluteLot).length; i++){
-            if(parseInt(absoluteLot[i].id) == (absoluteLotId+1)) temp.push(parseInt(absoluteLot[i].id));
+            if(parseInt(absoluteLot[i].id) === (absoluteLotId+1)) temp.push(parseInt(absoluteLot[i].id));
         }
         for (let index = 0; index < event.length; index++) {
             temp.push(parseInt(event[index].absVal));
@@ -249,7 +249,7 @@ function PerformAction() {
         setAbsoluteLotId(index);
         setPossibleIngr([]);
         for (let i = 0; i < Object.keys(absoluteLot).length; i++) {
-            if ((absoluteLot[i].active) && (parseInt(absoluteLot[i].stage) == 1) && (parseInt(absoluteLot[i].id) != parseInt(absoluteLot[index].id))) {
+            if ((absoluteLot[i].active) && (parseInt(absoluteLot[i].stage) === 1) && (parseInt(absoluteLot[i].id) !== parseInt(absoluteLot[index].id))) {
                 temp.push({value: parseInt(product[parseInt(absoluteLot[i].id_product)-1].id), label: product[parseInt(absoluteLot[i].id_product)-1].name, absVal: parseInt(absoluteLot[i].id)});
             }
         }
@@ -282,7 +282,7 @@ function PerformAction() {
         const temp = [];
         let responseData="";
 
-        if(actionFile != "") {
+        if(actionFile !== "") {
             const val = await Promise.all([getHash(actionFile)]).then((values) => {
                 return values;
             });
@@ -293,28 +293,28 @@ function PerformAction() {
             switch (parseInt(actionType)) {
                 case 0: // Manufacturing
                     for(let i=0; i<Object.keys(supLotStock).length; i++){
-                        if (parseInt(supLotStock[i].absolute_id) == (parseInt(absoluteLotId)+1)) index = parseInt(supLotStock[i].id);
+                        if (parseInt(supLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(supLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.baseActions(temp, lotLoaction, 1, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
                 case 1: // Distribution
                     for(let i=0; i<Object.keys(manLotStock).length; i++){
-                        if (parseInt(manLotStock[i].absolute_id) == (parseInt(absoluteLotId)+1)) index = parseInt(manLotStock[i].id);
+                        if (parseInt(manLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(manLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.baseActions(temp, lotLoaction, 2, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
                 case 2: // Retailing
                     for(let i=0; i<Object.keys(disLotStock).length; i++){
-                        if (parseInt(disLotStock[i].absolute_id) == (parseInt(absoluteLotId)+1)) index = parseInt(disLotStock[i].id);
+                        if (parseInt(disLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(disLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.baseActions(temp, lotLoaction, 3, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
                 case 3: // Transformation
                     for(let i=0; i<Object.keys(manLotStock).length; i++){
-                        if (parseInt(manLotStock[i].absolute_id) == (parseInt(absoluteLotId)+1)) index = parseInt(manLotStock[i].id);
+                        if (parseInt(manLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(manLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.transform(temp,  productId, lotSize, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
@@ -352,7 +352,7 @@ function PerformAction() {
     }
     
     for (let i = 0; i < Object.keys(product).length; i++) {
-        if(product[i].name != ""){
+        if(product[i].name !== ""){
             name_ingr.push({value: product[i].id, label: product[i].name})
         }
     }
@@ -361,7 +361,7 @@ function PerformAction() {
         let man_action = [];
         let dis_action = [];
         let ret_action = [];
-        if(absoluteLotId==-1) return [];
+        if(absoluteLotId===-1) return [];
         else{
             switch (parseInt(absoluteLot[absoluteLotId].stage)) {
                 case 0:
@@ -401,7 +401,7 @@ function PerformAction() {
     const total_actions = displayAction();
 
     for (let i = 0; i < Object.keys(actors).length; i++) {
-        if(actors[i].addr == currentaccount && total_actions.length!=0) {
+        if(actors[i].addr === currentaccount && total_actions.length!==0) {
             for (let j=0; j<total_actions[parseInt(actors[i].role)].length; j++){
                 possible_actions.push(total_actions[parseInt(actors[i].role)][j]);
             }
@@ -443,7 +443,7 @@ function PerformAction() {
                     <input type="text" className="form-control" id="floatingLocation" onChange={handlerLotLocation} placeholder='ciao' required/>
                     <label for="floatingLocation">{t("locationLot")}</label>
                 </div>     
-                <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) != t("sup")) ? t("limit") : ""}>
+                <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) !== t("sup")) ? t("limit") : ""}>
                     <button className="me-1 btn btn-success"  disabled={(showActorRole(actors, currentaccount, t).includes(t("sup"))) ? false : true} onSubmit={handlerCreateLot} style={{width: '10cm', fontWeight: 'bold'}}>{t("create")}</button>
                 </div>  
                      
@@ -472,7 +472,7 @@ function PerformAction() {
                                     <td>{product[parseInt(absoluteLot[key].id_product)-1].name}</td>
                                     <td>{showStage(parseInt(absoluteLot[key].stage), t)}</td>
                                     <td>{showLocation(parseInt(absoluteLot[key].id), absoluteLot, supLotStock, manLotStock, disLotStock, retLotStock,t)}</td>
-                                    <td><Button disabled={(absoluteLot[key].stage == 4) ? true : false} value={key} className="btn btn-dark bg-green text-yellow btn-sm" onClick={handleShow}>{t("perform")}</Button></td>
+                                    <td><Button disabled={(absoluteLot[key].stage === 4) ? true : false} value={key} className="btn btn-dark bg-green text-yellow btn-sm" onClick={handleShow}>{t("perform")}</Button></td>
                                     <td><Button value={key} className="btn btn-primary btn-sm" onClick={redirect_to_track}>{t("track")}</Button></td>
                                 </tr>
                             )
@@ -493,7 +493,7 @@ function PerformAction() {
                         ))}
                     </select>
                     {
-                        actionType >= 0 && actionType <= 4 && actionType != 3 &&
+                        actionType >= 0 && actionType <= 4 && actionType !== 3 &&
                         <div>
                             <div className="form-floating mb-3 mt-3">
                                 <input type="text" className="form-control" id="floatingLocation" onChange={handlerChangeLocation} placeholder="New location in warehouse" required/>
@@ -510,14 +510,14 @@ function PerformAction() {
                         </div>
                     }
                     {
-                        actionType == 3 && //tranformation
+                        actionType === 3 && //tranformation
                         <div>
                             <div className='form mb-3 mt-3'> 
                                 <select className="form-select" onChange={handlerProductID} required> 
                                     <option value="" defaultValue={'DEFAULT'} >{t("chooseProduct")}</option>
                                     {name_ingr.map(function(item){
-                                        if ((product[parseInt(item.value)-1].active) && (ingredients[parseInt(item.value)-1].length==1)) {
-                                            if (product[parseInt(item.value)-1].name == product[parseInt(productId)-1].name || ingredients[parseInt(item.value)-1].includes(product[parseInt(productId)-1].id)) return (<option value={parseInt(item.value)}>{item.label}</option>)
+                                        if ((product[parseInt(item.value)-1].active) && (ingredients[parseInt(item.value)-1].length===1)) {
+                                            if (product[parseInt(item.value)-1].name === product[parseInt(productId)-1].name || ingredients[parseInt(item.value)-1].includes(product[parseInt(productId)-1].id)) return (<option value={parseInt(item.value)}>{item.label}</option>)
                                         }
                                     })}
                                 </select>
@@ -541,7 +541,7 @@ function PerformAction() {
                         </div>
                     }
                     {
-                        actionType == 5 && //integration
+                        actionType === 5 && //integration
                         <div>
                             <br/>
                             <Select 
@@ -569,7 +569,7 @@ function PerformAction() {
                         </div>
                     }
                     {
-                        actionType == 6 && //division
+                        actionType === 6 && //division
                         <div>
                             <br/>
                             Weight of current lot: <b>{parseInt(absoluteLot[absoluteLotId].size)}</b> kg
@@ -638,7 +638,7 @@ function showActorRole(arr1, addr, t) {
     var possibility = [t("sup"), t("man"), t("dis"), t("ret")];
     var output=[];
     for (let index = 0; index < Object.keys(arr1).length; index++) {
-        if (arr1[index].addr == addr){
+        if (arr1[index].addr === addr){
             if (cond) output.push( " / ");
             output.push(possibility[arr1[index].role]);
             cond=true;
@@ -646,7 +646,7 @@ function showActorRole(arr1, addr, t) {
     }
     if (addr === process.env.REACT_APP_OWNER_ADDRESS) {
         output.push(t("own"))
-    } else if (output.length == 0){
+    } else if (output.length === 0){
         output.push(t("notReg"));
     }
     return output;
@@ -672,22 +672,22 @@ function showLocation(absId, absoluteLot, supLotStock, manLotStock, disLotStock,
     switch (parseInt(absoluteLot[absId-1].stage)) {
         case 0:
             for (let i=0; i<Object.keys(supLotStock).length; i++){
-                if(parseInt(supLotStock[i].absolute_id) == absId) index=parseInt(supLotStock[i].id);
+                if(parseInt(supLotStock[i].absolute_id) === absId) index=parseInt(supLotStock[i].id);
             }
             return supLotStock[index-1].location;
         case 1:
             for (let i=0; i<Object.keys(manLotStock).length; i++){
-                if(parseInt(manLotStock[i].absolute_id) == absId) index=parseInt(manLotStock[i].id);
+                if(parseInt(manLotStock[i].absolute_id) === absId) index=parseInt(manLotStock[i].id);
             }
             return manLotStock[index-1].location;
         case 2:
             for (let i=0; i<Object.keys(disLotStock).length; i++){
-                if(parseInt(disLotStock[i].absolute_id) == absId) index=parseInt(disLotStock[i].id);
+                if(parseInt(disLotStock[i].absolute_id) === absId) index=parseInt(disLotStock[i].id);
             }
             return disLotStock[index-1].location;
         case 3:
             for (let i=0; i<Object.keys(retLotStock).length; i++){
-                if(parseInt(retLotStock[i].absolute_id) == absId) index=parseInt(retLotStock[i].id);
+                if(parseInt(retLotStock[i].absolute_id) === absId) index=parseInt(retLotStock[i].id);
             }
             return retLotStock[index-1].location;
         case 4:

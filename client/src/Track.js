@@ -135,7 +135,7 @@ function Track() {
         let tempSources = [];
         let tempStage = [];
         let count=-1;
-        if(lotId.length!=0){
+        if(lotId.length!==0){
             return(
                 <div>
                     {lotId.map(function(item){
@@ -143,7 +143,7 @@ function Track() {
                         switch (stage[count]) {
                             case 0:
                                 for(let i=0; i<Object.keys(actions).length; i++){
-                                    if(parseInt(actions[i].actionType) == 7 && sinks[i].includes(supLotStock[parseInt(item)-1].id)){
+                                    if(parseInt(actions[i].actionType) === 7 && sinks[i].includes(supLotStock[parseInt(item)-1].id)){
                                         return(
                                             <div>
                                                 {supPart(item,actions[i].id)}
@@ -154,9 +154,9 @@ function Track() {
                                 break;
                             case 1:
                                 for(let i=0; i<Object.keys(actions).length; i++){
-                                    if(parseInt(actions[i].actionType) == 0 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
+                                    if(parseInt(actions[i].actionType) === 0 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
                                         for(let j=0; j<Object.keys(supLotStock).length; j++){
-                                            if(parseInt(manLotStock[parseInt(item)-1].absolute_id) == parseInt(supLotStock[j].absolute_id)) {
+                                            if(parseInt(manLotStock[parseInt(item)-1].absolute_id) === parseInt(supLotStock[j].absolute_id)) {
                                                 tempSources.push(supLotStock[j].id);
                                                 tempStage.push(0);
                                             }
@@ -167,7 +167,7 @@ function Track() {
                                             </div>
                                         )  
                                     }
-                                    if(parseInt(actions[i].actionType) == 3 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
+                                    if(parseInt(actions[i].actionType) === 3 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
                                         for(let j=0; j<sources[i].length; j++){
                                             tempSources.push(sources[i][j]);
                                             tempStage.push(1);
@@ -178,7 +178,7 @@ function Track() {
                                             </div>
                                         ) 
                                     }
-                                    if(parseInt(actions[i].actionType) == 5 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
+                                    if(parseInt(actions[i].actionType) === 5 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){ 
                                         for(let j=0; j<sources[i].length; j++){
                                             tempSources.push(sources[i][j]);
                                             tempStage.push(1);
@@ -189,7 +189,7 @@ function Track() {
                                             </div>
                                         ) 
                                     }
-                                    if(parseInt(actions[i].actionType) == 6 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
+                                    if(parseInt(actions[i].actionType) === 6 && sinks[i].includes(manLotStock[parseInt(item)-1].id)){
                                         for(let j=0; j<sources[i].length; j++){
                                             tempSources.push(sources[i][j]);
                                             tempStage.push(1);
@@ -204,7 +204,7 @@ function Track() {
                                 break;
                             case 2:
                                 for(let i=0; i<Object.keys(actions).length; i++){
-                                    if(parseInt(actions[i].actionType) == 1 && sinks[i].includes(disLotStock[parseInt(item)-1].id)){
+                                    if(parseInt(actions[i].actionType) === 1 && sinks[i].includes(disLotStock[parseInt(item)-1].id)){
                                         for(let j=0; j<sources[i].length; j++){
                                             tempSources.push(sources[i][j]);
                                             tempStage.push(1);
@@ -219,7 +219,7 @@ function Track() {
                                 break;
                             case 3:
                                 for(let i=0; i<Object.keys(actions).length; i++){
-                                    if(parseInt(actions[i].actionType) == 2 && sinks[i].includes(retLotStock[parseInt(item)-1].id)){
+                                    if(parseInt(actions[i].actionType) === 2 && sinks[i].includes(retLotStock[parseInt(item)-1].id)){
                                         for(let j=0; j<sources[i].length; j++){
                                             tempSources.push(sources[i][j]);
                                             tempStage.push(2);
@@ -255,7 +255,7 @@ function Track() {
 
     const supPart = (lotId, actionId) => {
         for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == supLotStock[parseInt(lotId)-1].actor){
+            if(actors[i].addr === supLotStock[parseInt(lotId)-1].actor){
                 actorIndex = parseInt(actors[i].id)-1;
                 break;
             }
@@ -274,7 +274,7 @@ function Track() {
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
                         {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
-                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
+                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction===""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
 
@@ -302,7 +302,7 @@ function Track() {
     }
     const manPart = (lotId, actionId) => {
         for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == manLotStock[parseInt(lotId)-1].actor){
+            if(actors[i].addr === manLotStock[parseInt(lotId)-1].actor){
                 actorIndex = parseInt(actors[i].id)-1;
                 break;
             }
@@ -321,7 +321,7 @@ function Track() {
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
                         {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
-                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
+                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction===""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
 
@@ -349,7 +349,7 @@ function Track() {
     }
     const disPart = (lotId, actionId) => {
         for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == disLotStock[parseInt(lotId)-1].actor){
+            if(actors[i].addr === disLotStock[parseInt(lotId)-1].actor){
                 actorIndex = parseInt(actors[i].id)-1;
                 break;
             }
@@ -368,7 +368,7 @@ function Track() {
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
                         {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
-                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
+                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction===""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
                     </p>
@@ -395,7 +395,7 @@ function Track() {
     }
     const retPart = (lotId, actionId) => {
         for(let i=0; i<Object.keys(actors).length; i++){
-            if(actors[i].addr == retLotStock[parseInt(lotId)-1].actor){
+            if(actors[i].addr === retLotStock[parseInt(lotId)-1].actor){
                 actorIndex = parseInt(actors[i].id)-1;
                 break;
             }
@@ -414,7 +414,7 @@ function Track() {
                     <p>
                         {t("actType")}: <b>{showActionType(actions[parseInt(actionId)-1].actionType, t)}</b><br/>
                         {t("date")}: <b>{getDate(parseInt(actions[parseInt(actionId)-1].timestamp))}</b><br/>
-                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction==""? "None" : "inline"}}>
+                        <p style={{display: actions[parseInt(actionId)-1].hashFileAction===""? "None" : "inline"}}>
                             {t("infoOf")} {t("actType")}: <a href={'https://gateway.pinata.cloud/ipfs/'+ actions[parseInt(actionId)-1].hashFileAction} target='_blank' rel="noreferrer">{t("read")}</a>
                         </p>
                     </p>
@@ -508,7 +508,7 @@ function showActionType(action, t){
 }
 
 function showArrow(arr){
-    if(arr.length != 0) return(
+    if(arr.length !== 0) return(
         <div style={{textAlign: "center", justifyContent: "center"}}>
             <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" className="mb-5 bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
                 <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293z"/>

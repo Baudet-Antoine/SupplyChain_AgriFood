@@ -148,7 +148,7 @@ function AddProd() {
     }
     const name_ingr = [];
     for (let i = 0; i < Object.keys(product).length; i++) {
-        if(product[i].name != '' && product[i].active) name_ingr.push({value: product[i].id, label: product[i].name})
+        if(product[i].name !== '' && product[i].active) name_ingr.push({value: product[i].id, label: product[i].name})
     }
 
     return (
@@ -189,7 +189,7 @@ function AddProd() {
                 <div className="form mb-3">
                     <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files)} multiple required/>
                 </div>
-                <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) != t("own")) ? t("limitOwn") : ""}>
+                <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) !== t("own")) ? t("limitOwn") : ""}>
                     <button className="me-1 btn btn-success"  disabled={(showActorRole(actors, currentaccount, t).includes(t("own"))) ? false : true} onSubmit={handlerSubmitProduct} style={{width: '10cm', fontWeight: 'bold'}}>{t("addButton")}</button>
                 </div> 
             </form>
@@ -209,7 +209,7 @@ function AddProd() {
                 </thead>
                 <tbody>
                     {Object.keys(product).map(function (key) {
-                        if(product[key].active == true){
+                        if(product[key].active === true){
                             let x=0;
                             return (
                                 <tr key={key}>
@@ -241,9 +241,9 @@ function AddProd() {
 
 function showNames(ingr, prod){
     let output=[];
-    if(ingr.length != 0) {
+    if(ingr.length !== 0) {
         for (let i = 0; i < ingr.length; i++) {
-            if (i == ingr.length-1) {
+            if (i === ingr.length-1) {
                 output.push(prod[Number(ingr[i])-1].name)
             } else {
                 output.push(prod[Number(ingr[i])-1].name+" - ")
@@ -259,7 +259,7 @@ function showActorRole(arr1, addr, t) {
     var possibility = [t("sup"), t("man"), t("dis"), t("ret")];
     var output=[];
     for (let index = 0; index < Object.keys(arr1).length; index++) {
-        if (arr1[index].addr == addr){
+        if (arr1[index].addr === addr){
             if (cond) output.push( " / ");
             output.push(possibility[arr1[index].role]);
             cond=true;
@@ -267,7 +267,7 @@ function showActorRole(arr1, addr, t) {
     }
     if (addr === process.env.REACT_APP_OWNER_ADDRESS) { 
         output.push(t("own"))
-    } else if (output.length == 0){
+    } else if (output.length === 0){
         output.push(t("notReg"));
     }
     return output;
