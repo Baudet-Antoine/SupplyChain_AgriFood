@@ -21,7 +21,7 @@ contract SupplyChain{
 
     // modifier to make sure only the owner is using the function
     modifier onlyByOwner() {
-        require(msg.sender == Owner);
+        require(msg.sender == Owner, "Only the contract owner can perform this action");
         _;
     }
 
@@ -30,7 +30,7 @@ contract SupplyChain{
         for (uint256 i=0; i<=actorCtr; i++) {
             if((Actors[i].addr == msg.sender) && (Actors[i].role == _role) && (msg.sender != Owner)) cond=true;
         }
-        require(cond);
+        require(cond, "Sender is not a valid actor for this role or is the Owner");
         _;
     }
 
@@ -157,21 +157,21 @@ contract SupplyChain{
         actionCtr++;
         uint256[] memory sink = new uint[](1);
         if (_role == ROLE.Manufacturer){
-            require(LotStock[SupLotStock[_source[0]].absolute_id].stage == STAGE.Supply);
+            require(LotStock[SupLotStock[_source[0]].absolute_id].stage == STAGE.Supply, "Lot is not in Supply stage");
             manLotCtr++;
             sink[0] = manLotCtr;
             ManLotStock[manLotCtr] = lot(manLotCtr, SupLotStock[_source[0]].absolute_id, SupLotStock[_source[0]].id_product, SupLotStock[_source[0]].size, _location, msg.sender);
             LotStock[SupLotStock[_source[0]].absolute_id].stage = STAGE.Manufacturing;
             Actions[actionCtr] = action(actionCtr, ACTION_TYPE.Manufacture, _source, sink, block.timestamp, _duration, hashFileAction);
         } else if (_role == ROLE.Distributor){
-            require(LotStock[ManLotStock[_source[0]].absolute_id].stage == STAGE.Manufacturing);
+            require(LotStock[ManLotStock[_source[0]].absolute_id].stage == STAGE.Manufacturing, "Lot is not in Manufacturing stage");
             disLotCtr++;
             sink[0] = disLotCtr;
             DisLotStock[disLotCtr] = lot(disLotCtr, ManLotStock[_source[0]].absolute_id, ManLotStock[_source[0]].id_product, ManLotStock[_source[0]].size, _location, msg.sender);
             LotStock[ManLotStock[_source[0]].absolute_id].stage = STAGE.Distribution;
             Actions[actionCtr] = action(actionCtr, ACTION_TYPE.Distribution, _source, sink, block.timestamp, _duration, hashFileAction);
         } else if (_role == ROLE.Retailer){
-            require(LotStock[DisLotStock[_source[0]].absolute_id].stage == STAGE.Distribution);
+            require(LotStock[DisLotStock[_source[0]].absolute_id].stage == STAGE.Distribution, "Lot is not in Distribution stage");
             retLotCtr++;
             sink[0] = retLotCtr;
             RetLotStock[retLotCtr] = lot(retLotCtr, DisLotStock[_source[0]].absolute_id, DisLotStock[_source[0]].id_product, DisLotStock[_source[0]].size, _location, msg.sender);
@@ -185,30 +185,30 @@ contract SupplyChain{
         for (uint256 i=0; i<=actorCtr; i++) {
             if((Actors[i].addr == msg.sender) && (Actors[i].role == ROLE.Retailer)) cond=true;
         }  
-        require(cond);
+        require(cond, "Sender is not a Retailer or not registered");
         LotStock[_absoluteId].stage = STAGE.Sold;
     }
 
     function destruction(uint256 _absoluteId) public {
-        require(LotStock[_absoluteId].stage != STAGE.Sold);
+        require(LotStock[_absoluteId].stage != STAGE.Sold, "Lot already sold");
         if (LotStock[_absoluteId].stage >= STAGE.Supply){
             for (uint256 i=0; i<=supLotCtr; i++) {
-                if (SupLotStock[i].absolute_id == _absoluteId) require(SupLotStock[i].actor==msg.sender);
+                if (SupLotStock[i].absolute_id == _absoluteId) require(SupLotStock[i].actor==msg.sender, "Not the owner of this supply lot");
             }
         }
         if (LotStock[_absoluteId].stage >= STAGE.Manufacturing) {
             for (uint256 i=0; i<=manLotCtr; i++) {
-                if (ManLotStock[i].absolute_id == _absoluteId) require(ManLotStock[i].actor==msg.sender);
+                if (ManLotStock[i].absolute_id == _absoluteId) require(ManLotStock[i].actor==msg.sender, "Not the owner of this manufacturing lot");
             }
         }
         if (LotStock[_absoluteId].stage >= STAGE.Distribution){
             for (uint256 i=0; i<=disLotCtr; i++) {
-                if (DisLotStock[i].absolute_id == _absoluteId) require(DisLotStock[i].actor==msg.sender);
+                if (DisLotStock[i].absolute_id == _absoluteId) require(DisLotStock[i].actor==msg.sender, "Not the owner of this distribution lot");
             }
         }
         if (LotStock[_absoluteId].stage >= STAGE.Retail){
             for (uint256 i=0; i<=retLotCtr; i++) {
-                if (RetLotStock[i].absolute_id == _absoluteId) require(DisLotStock[i].actor==msg.sender);
+                if (RetLotStock[i].absolute_id == _absoluteId) require(DisLotStock[i].actor==msg.sender, "Not the owner of this retail lot");
             }
         }
         for (uint256 i=1; i<=actionCtr; i++){

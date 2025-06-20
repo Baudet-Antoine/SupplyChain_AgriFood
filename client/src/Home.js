@@ -10,6 +10,53 @@ import { IT, GB } from 'country-flag-icons/react/3x2'
 
 console.log('🏠 Home component module loaded');
 
+// Helper function to handle MetaMask errors
+const handleMetaMaskError = (error, operation = "transaction") => {
+    console.error(`❌ MetaMask ${operation} error:`, error);
+    
+    let errorMessage = `MetaMask ${operation} failed: `;
+    
+    switch (error.code) {
+        case 4001:
+            errorMessage += "User rejected the request";
+            break;
+        case 4100:
+            errorMessage += "The requested account and/or method has not been authorized";
+            break;
+        case 4200:
+            errorMessage += "The requested method is not supported";
+            break;
+        case 4900:
+            errorMessage += "The provider is disconnected";
+            break;
+        case 4901:
+            errorMessage += "The provider is not connected to the requested chain";
+            break;
+        case -32002:
+            errorMessage += "Request is already pending. Please check MetaMask";
+            break;
+        case -32603:
+            errorMessage += "Internal JSON-RPC error. This might be due to network issues or incorrect transaction parameters";
+            break;
+        case -32000:
+            errorMessage += "Invalid input or execution error";
+            break;
+        default:
+            errorMessage += error.message || "Unknown error occurred";
+    }
+    
+    // Add specific suggestions for -32603 error
+    if (error.code === -32603) {
+        errorMessage += "\n\nSuggestions:\n";
+        errorMessage += "• Check if you're connected to the correct network (Ganache: Chain ID 5777)\n";
+        errorMessage += "• Ensure you have sufficient ETH for gas fees\n";
+        errorMessage += "• Try refreshing the page and reconnecting MetaMask\n";
+        errorMessage += "• Check if Ganache is running on localhost:7545";
+    }
+    
+    return errorMessage;
+};
+
 function Home() {
     console.log('🏗️ Home component initializing...');
     
@@ -23,9 +70,9 @@ function Home() {
 
     const history = useNavigate()
     console.log('🧭 Navigation hook initialized');
-    
-    useEffect(() => {
+      useEffect(() => {
         console.log('⚡ Home useEffect triggered - starting blockchain initialization');
+        checkNetworkStatus();
         loadWeb3();
         loadBlockchaindata();
     }, [])
@@ -37,15 +84,36 @@ function Home() {
     const [id, setId] = useState([{}]);
     const [show, setShow] = useState(false);
 
-    console.log('📊 Home component state initialized');
-
-    const loadWeb3 = async () => {
+    console.log('📊 Home component state initialized');    const loadWeb3 = async () => {
         console.log('🌐 Starting Web3 initialization...');
         try {
             if (window.ethereum) {
                 console.log('✅ MetaMask detected, connecting...');
                 window.web3 = new Web3(window.ethereum);
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                
+                // Request account access
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                console.log('✅ Connected accounts:', accounts);
+                
+                // Check network
+                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+                console.log('🌐 Current chain ID:', chainId);
+                
+                // Add network change listener
+                window.ethereum.on('chainChanged', (chainId) => {
+                    console.log('🔄 Network changed to:', chainId);
+                    window.location.reload();
+                });
+                
+                // Add account change listener
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    console.log('👤 Account changed to:', accounts);
+                    if (accounts.length === 0) {
+                        console.log('🚪 User disconnected MetaMask');
+                    }
+                    window.location.reload();
+                });
+                
                 console.log('✅ Web3 connected successfully via MetaMask');
             } else if (window.web3) {
                 console.log('✅ Legacy Web3 detected, connecting...');
@@ -53,22 +121,22 @@ function Home() {
                 console.log('✅ Web3 connected successfully via legacy provider');
             } else {
                 console.error('❌ No Web3 provider found');
-                window.alert(
-                    t("ethAlert")
-                );
-            }
-        } catch (error) {
+                window.alert(t("ethAlert"));
+            }        } catch (error) {
             console.error('❌ Web3 initialization failed:', error);
+            const errorMessage = handleMetaMaskError(error, "connection");
+            alert(errorMessage);
         }
-    };    const loadBlockchaindata = async () => {
+    };
+    
+    const loadBlockchaindata = async () => {
         console.log('🔗 Starting blockchain data loading...');
         setloader(true);
         
         try {
-            const web3 = window.web3;
-            if (!web3) {
+            const web3 = window.web3;            if (!web3) {
                 console.error('❌ Web3 not initialized');
-                return;
+                throw new Error('Web3 not initialized. Please refresh and connect MetaMask.');
             }
             
             console.log('🌐 Getting network ID...');
@@ -136,13 +204,47 @@ function Home() {
             else {
                 console.error('❌ Contract not found on network:', networkId);
                 console.error('Available networks in ABI:', Object.keys(SupplyChainABI.networks));
-                alert(t("contractAlert"));            }
-        } catch (error) {
+                alert(t("contractAlert"));            }        } catch (error) {
             console.error('❌ Blockchain data loading failed:', error);
+            
+            // Use our helper function for better error messages
+            const errorMessage = handleMetaMaskError(error, "blockchain data loading");
+            alert(errorMessage);
+            
             setloader(false);
         }
     }
     
+    // Add network diagnostic function
+    const checkNetworkStatus = async () => {
+        try {
+            if (!window.ethereum) {
+                console.log('🔍 Network Check: No MetaMask detected');
+                return;
+            }
+            
+            const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+            const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+            
+            console.log('🔍 Network Diagnostic:');
+            console.log('  Chain ID:', chainId);
+            console.log('  Connected accounts:', accounts);
+            console.log('  Expected Chain ID for Ganache: 0x1691 (5777)');
+            console.log('  Current Chain ID matches Ganache:', chainId === '0x1691');
+            
+            if (chainId !== '0x1691') {
+                console.warn('⚠️ Not connected to Ganache network!');
+            }
+            
+            if (accounts.length === 0) {
+                console.warn('⚠️ No accounts connected!');
+            }
+            
+        } catch (error) {
+            console.error('❌ Network check failed:', error);
+        }
+    };
+
     console.log('🔄 Home component render - loader state:', loader);
     
     if (loader) {

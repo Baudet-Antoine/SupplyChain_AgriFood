@@ -70,33 +70,56 @@ function AssignRoles() {
             <div>
                 <h1 className="wait">{t("loading")}</h1>
             </div>
-        )
-
-    }
+        )    }
     const redirect_to_home = () => {
         history('/')
     }
+    
     const handlerChangeAddressACT = (event) => {
         setActorAddress(event.target.value);
     }
+    
     const handlerChangePlaceACT = (event) => {
         setActorPlace(event.target.value);
     }
+    
     const handlerChangeNameACT = (event) => {
         setActorName(event.target.value);
     }
+    
     const handlerChangeRoleACT = (event) => {
-        const role=[]
+        const role = [];
         for (let i = 0; i < event.length; i++) {
             role.push(parseInt(event[i].value));
         }
         setActorRole(role);
     }
+    
     const handlerSubmitACT = async (event) => {
         event.preventDefault();
+        console.log('📤 Starting actor submission...');
+        
         try {
+            // Check if all required fields are present
+            if (!file) {
+                alert(t("Please select a file first"));
+                return;
+            }
+            
+            console.log('📁 Uploading file to IPFS...');
+            console.log('File details:', {
+                name: file.name,
+                size: file.size,
+                type: file.type
+            });
+            
             const fileData = new FormData();
             fileData.append("file", file);
+            
+            console.log('🔑 Using Pinata API credentials...');
+            console.log('API Key:', process.env.REACT_APP_PINATA_API_KEY ? 'Present' : 'Missing');
+            console.log('Secret Key:', process.env.REACT_APP_PINATA_SECRET_KEY ? 'Present' : 'Missing');
+            
             const responseData = await axios({
                 method: "post",
                 url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
@@ -106,25 +129,47 @@ function AssignRoles() {
                     'pinata_secret_api_key': process.env.REACT_APP_PINATA_SECRET_KEY,
                     "Content-Type": "multipart/form-data"
                 }
-            })
+            });
+            
+            console.log('✅ File uploaded to IPFS:', responseData.data);
             const fileUrl = "https://gateway.pinata.cloud/ipfs/" + responseData.data.IpfsHash;
+            console.log('🔗 IPFS URL:', fileUrl);
+            
+            console.log('🔗 Adding actor to blockchain...');
             var reciept = await supplyChain.methods.addActor(actorAddress, actorRole, actorName, actorPlace, responseData.data.IpfsHash).send({ from: currentaccount});
+            
             if (reciept) {
+                console.log('✅ Actor added successfully');
                 loadBlockchaindata()
             };
         } catch (err) {
-            alert(t("errAlert"))
+            console.error('❌ Actor submission failed:', err);
+            
+            if (err.response) {
+                console.error('Response status:', err.response.status);
+                console.error('Response data:', err.response.data);
+                
+                if (err.response.status === 400) {
+                    alert(`IPFS Upload Error: ${err.response.data.error || 'Bad Request'}. Please check your Pinata API credentials.`);
+                } else if (err.response.status === 401) {
+                    alert('IPFS Authentication Error: Invalid Pinata API credentials');
+                } else {
+                    alert(`IPFS Error: ${err.response.status} - ${err.response.data.error || 'Unknown error'}`);
+                }
+            } else {
+                alert(t("errAlert") + ": " + err.message);
+            }
         }
     }
-
+    
     return (
         <div className='main'>
-            <dev className='container'>
+            <div className='container'>
                 <button onClick={redirect_to_home} className="ms-4 btn btn-danger" style={{ position: 'absolute', left: '35px', top: '40px' }}>HOME</button>
                 <h1 className='title'>{t("manageActor")}</h1>
                 <GB title="English" type='button' onClick={() => handleChangeLanguage("en")}  style={{position: 'absolute', right: '55px', top: '45px', height: '30px'}}/>
                 <IT title="Italiano" type='button' onClick={() => handleChangeLanguage("it")}  style={{position: 'absolute', right: '120px', top: '45px', height: '30px'}}/>
-            </dev>
+            </div>
             <br/><br/>
             <span>
                 <b>{t("currentAddr")}</b> {currentaccount}
@@ -135,18 +180,17 @@ function AssignRoles() {
 
             <h4>{t("createAct")}</h4>
             <br/>
-            <form onSubmit={handlerSubmitACT} >
-                <div className="form-floating mb-3">
+            <form onSubmit={handlerSubmitACT} >                <div className="form-floating mb-3">
                     <input type="text" className="form-control" id="floatingEth" onChange={handlerChangeAddressACT} placeholder="Add Ethereum Address" required/>
-                    <label for="floatingEth">{t("ethAddr")}</label>
+                    <label htmlFor="floatingEth">{t("ethAddr")}</label>
                 </div>
                 <div className="form-floating mb-3">
                     <input type="text" className="form-control" id="floatingName" onChange={handlerChangeNameACT} placeholder="Add Name Actor" required/>
-                    <label for="floatingName">{t("actName")}</label>
+                    <label htmlFor="floatingName">{t("actName")}</label>
                 </div>
                 <div className="form-floating mb-3">
                     <input type="text" className="form-control" id="floatingPlace" onChange={handlerChangePlaceACT} placeholder="Add Location" required/>
-                    <label for="floatingPlace">{t("actLocation")}</label>
+                    <label htmlFor="floatingPlace">{t("actLocation")}</label>
                 </div>
                 <div className="form mb-3">
                     <label>{t("selectRole")}</label>
@@ -161,7 +205,8 @@ function AssignRoles() {
                     />
                 </div>
                 <div className="form mb-3">
-                    <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files[0])} required/>
+                    {/* <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files[0])} required/> */}
+                    <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files[0])} />
                 </div>
                 <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) !== t("own")) ? t("limitOwn") : ""}>
                     <button className="btn btn-warning"  disabled={(showActorRole(actors, currentaccount, t).includes(t("own"))) ? false : true} onSubmit={handlerSubmitACT} style={{width: '10cm', fontWeight: 'bold'}}>{t("registerButton")}</button>

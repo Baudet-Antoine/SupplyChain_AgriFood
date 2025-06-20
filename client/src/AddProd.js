@@ -187,7 +187,8 @@ function AddProd() {
                     />
                 </div>  
                 <div className="form mb-3">
-                    <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files)} multiple required/>
+                    {/* <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files)} multiple required/> */}
+                    <input className="form-control " type="file" id="formFile" onChange={(e)=>setFile(e.target.files)} multiple/>
                 </div>
                 <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) !== t("own")) ? t("limitOwn") : ""}>
                     <button className="me-1 btn btn-success"  disabled={(showActorRole(actors, currentaccount, t).includes(t("own"))) ? false : true} onSubmit={handlerSubmitProduct} style={{width: '10cm', fontWeight: 'bold'}}>{t("addButton")}</button>

@@ -12,8 +12,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [],
@@ -26,8 +25,7 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function",
-      "constant": true
+      "type": "function"
     },
     {
       "inputs": [
@@ -634,7 +632,7 @@
   ],
   "sourceMap": "68:367:0:-:0;;;93:33;;;-1:-1:-1;;;;;;93:33:0;116:10;93:33;;;68:367;;;;;;;;;;;;;;;;",
   "deployedSourceMap": "68:367:0:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;131:36;;;;;;;;;160:25:2;;;148:2;133:18;131:36:0;;;;;;;;93:33;;;;;;;;;;;;372:42:2;360:55;;;342:74;;330:2;315:18;93:33:0;196:226:2;327:105:0;;;;;;:::i;:::-;;:::i;:::-;;;233:5;;;;219:10;:19;203:104;;;;;;;814:2:2;203:104:0;;;796:21:2;853:2;833:18;;;826:30;892:34;872:18;;;865:62;963:21;943:18;;;936:49;1002:19;;203:104:0;;;;;;;;390:24:::1;:36:::0;327:105::o;427:180:2:-;486:6;539:2;527:9;518:7;514:23;510:32;507:52;;;555:1;552;545:12;507:52;-1:-1:-1;578:23:2;;427:180;-1:-1:-1;427:180:2:o",
-  "source": "// SPDX-License-Identifier: MIT\r\npragma solidity >=0.8.2 <0.9.0;\r\n\r\ncontract Migrations {\r\n  address public owner = msg.sender;\r\n  uint public last_completed_migration;\r\n\r\n  modifier restricted() {\r\n    require(\r\n      msg.sender === owner,\r\n      \"This function is restricted to the contract's owner\"\r\n    );\r\n    _;\r\n  }\r\n\r\n  function setCompleted(uint completed) public restricted {\r\n    last_completed_migration = completed;\r\n  }\r\n}\r\n",
+  "source": "// SPDX-License-Identifier: MIT\r\npragma solidity >=0.8.2 <0.9.0;\r\n\r\ncontract Migrations {\r\n  address public owner = msg.sender;\r\n  uint public last_completed_migration;\r\n\r\n  modifier restricted() {\r\n    require(\r\n      msg.sender == owner,\r\n      \"This function is restricted to the contract's owner\"\r\n    );\r\n    _;\r\n  }\r\n\r\n  function setCompleted(uint completed) public restricted {\r\n    last_completed_migration = completed;\r\n  }\r\n}\r\n",
   "sourcePath": "C:\\Users\\antoi\\OneDrive\\Desktop\\Brescia\\DebugApp\\SupplyChain_AgriFood\\contracts\\Migrations.sol",
   "ast": {
     "absolutePath": "project:/contracts/Migrations.sol",
@@ -807,7 +805,7 @@
                           }
                         },
                         "nodeType": "BinaryOperation",
-                        "operator": "===",
+                        "operator": "==",
                         "rightExpression": {
                           "id": 12,
                           "name": "owner",
@@ -1047,13 +1045,12 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x273335aB11de9C5A50a570CCeE63e209298cAC7c",
-      "transactionHash": "0x5af5c61cb714bc83fbafea54f18bf5d86162d8c13d70e1fe5b18e9b8c7d5598e"
+      "address": "0xdCdD7eC48c7feE3f29A7a22C0fEEB742B2c1e9fF",
+      "transactionHash": "0xfd664d93d2153334fa74f4b0892c05746d8611afba910572087f2991de90e240"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2025-06-18T09:07:22.766Z",
-  "networkType": "ethereum",
+  "updatedAt": "2025-06-20T09:18:45.514Z",
   "devdoc": {
     "kind": "dev",
     "methods": {},

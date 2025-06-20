@@ -9,6 +9,18 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { IT, GB } from 'country-flag-icons/react/3x2'
 
+// Define action type constants for clarity
+const ACTION_TYPES = {
+    MANUFACTURING: "manufacturing",
+    DISTRIBUTION: "distribution",
+    RETAILING: "retailing",
+    TRANSFORMATION: "transformation",
+    INTEGRATION: "integration",
+    DIVISION: "division",
+    DESTRUCTION: "destruction",
+    SELL: "sell"
+};
+
 function PerformAction() {
 
     const [t, i18n] = useTranslation("translation");
@@ -18,7 +30,6 @@ function PerformAction() {
 
     const name_ingr = [];
     let supply_action = [];
-    let weights = [];
     const possible_actions = [];
     const item = [];
 
@@ -51,6 +62,9 @@ function PerformAction() {
     const [ingredients, setIngredients] = useState([]);
     const [title, setTitle] = useState("");
     const [cond, setCond] = useState(true);
+    const [divisionError, setDivisionError] = useState("");
+    // Remplacer let weights = [] par un state React
+    const [weights, setWeights] = useState([]);
 
     const loadWeb3 = async () => {
         if (window.ethereum) {
@@ -205,8 +219,16 @@ function PerformAction() {
     
     const allEqual = arr => arr.every(val => val === arr[0]);
 
+    // Reset relevant fields when the user selects another action
     const handleSelectAction = (event) => {
         setActionType(event.target.value);
+        setWeights([]); // Reset division weights
+        setDivisionError("");
+        setActionDuration("");
+        setLotSize("");
+        setLotLocation("");
+        setIntegrationInput([]);
+        setActionFile("");
     }
     const handlerChangeDuration = (event) => {
         setActionDuration(event.target.value);
@@ -290,47 +312,47 @@ function PerformAction() {
         }
 
         try {
-            switch (parseInt(actionType)) {
-                case 0: // Manufacturing
+            switch (actionType) {
+                case ACTION_TYPES.MANUFACTURING:
                     for(let i=0; i<Object.keys(supLotStock).length; i++){
                         if (parseInt(supLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(supLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.baseActions(temp, lotLoaction, 1, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
-                case 1: // Distribution
+                case ACTION_TYPES.DISTRIBUTION:
                     for(let i=0; i<Object.keys(manLotStock).length; i++){
                         if (parseInt(manLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(manLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.baseActions(temp, lotLoaction, 2, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
-                case 2: // Retailing
+                case ACTION_TYPES.RETAILING:
                     for(let i=0; i<Object.keys(disLotStock).length; i++){
                         if (parseInt(disLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(disLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.baseActions(temp, lotLoaction, 3, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
-                case 3: // Transformation
+                case ACTION_TYPES.TRANSFORMATION:
                     for(let i=0; i<Object.keys(manLotStock).length; i++){
                         if (parseInt(manLotStock[i].absolute_id) === (parseInt(absoluteLotId)+1)) index = parseInt(manLotStock[i].id);
                     }
                     temp.push(index);
                     reciept = await supplyChain.methods.transform(temp,  productId, lotSize, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
-                case 5: // Integration
+                case ACTION_TYPES.INTEGRATION:
                     reciept = await supplyChain.methods.integrate(integrationInput, productId, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     break;
-                case 6: // Division
+                case ACTION_TYPES.DIVISION:
                     console.log(weights)
                     reciept = await supplyChain.methods.division((parseInt(absoluteLotId)+1), weights, lotLoaction, parseInt(actionDuration), responseData).send({ from: currentaccount });
                     weights=[]
                     break;
-                case 7: // Destruction
+                case ACTION_TYPES.DESTRUCTION:
                     reciept = await supplyChain.methods.destruction(parseInt(absoluteLotId)+1).send({ from: currentaccount });  
                     break;
-                case 8: // sell
+                case ACTION_TYPES.SELL:
                     reciept = await supplyChain.methods.sellLot(parseInt(absoluteLotId)+1).send({ from: currentaccount });
                     break;
             }
@@ -366,31 +388,32 @@ function PerformAction() {
             switch (parseInt(absoluteLot[absoluteLotId].stage)) {
                 case 0:
                     man_action = [
-                        {value: 0, label: t("manufacture")}
+                        {value: ACTION_TYPES.MANUFACTURING, label: t("manufacture")}
                     ]
-                    supply_action = [{value: 7, label: t("destruction")}]
+                    supply_action = [{value: ACTION_TYPES.DESTRUCTION, label: t("destruction")}] 
                     break;
             
                 case 1:
                     man_action = [
-                        {value: 3, label: t("transformation")},
-                        {value: 5, label: t("integration")},
-                        {value: 6, label: t("division")}                    ]
+                        {value: ACTION_TYPES.TRANSFORMATION, label: t("transformation")},
+                        {value: ACTION_TYPES.INTEGRATION, label: t("integration")},
+                        {value: ACTION_TYPES.DIVISION, label: t("division")}
+                    ]
                     dis_action = [
-                        {value: 1, label: t("distribute")},
-                        {value: 7, label: t("destruction")}
+                        {value: ACTION_TYPES.DISTRIBUTION, label: t("distribute")},
+                        {value: ACTION_TYPES.DESTRUCTION, label: t("destruction")}
                     ]
                     break;
                 case 2:
                     ret_action = [
-                        {value: 2, label: t("retail")},
-                        {value: 7, label: t("destruction")}
+                        {value: ACTION_TYPES.RETAILING, label: t("retail")},
+                        {value: ACTION_TYPES.DESTRUCTION, label: t("destruction")}
                     ]
                     break;
                 case 3:
                     ret_action = [
-                        {value: 8, label: t("sell")},
-                        {value: 7, label: t("destruction")}
+                        {value: ACTION_TYPES.SELL, label: t("sell")},
+                        {value: ACTION_TYPES.DESTRUCTION, label: t("destruction")}
                     ]
                     break;
             }
@@ -407,6 +430,12 @@ function PerformAction() {
             }
         }
     }
+
+    // Calculs pour la division (toujours à jour pour le rendu)
+    const lotSizeCurrent = (absoluteLot && absoluteLotId !== -1 && absoluteLot[absoluteLotId]) ? parseInt(absoluteLot[absoluteLotId].size) : 0;
+    const divisionSum = Array.isArray(weights) ? weights.reduce((acc, val) => acc + (parseInt(val) || 0), 0) : 0;
+    // Désactive le bouton si la somme dépasse la taille du lot courant
+    const isDivisionValid = divisionSum <= lotSizeCurrent;
 
     return(
         <div className='main'>
@@ -437,11 +466,11 @@ function PerformAction() {
                 </div> 
                 <div className="form-floating mb-3">
                     <input type="number" className="form-control" id="floatingSize" onChange={handlerLotSize} placeholder='ciao' required/>
-                    <label for="floatingSize">{t("sizeLot")}</label>
+                    <label htmlFor="floatingSize">{t("sizeLot")}</label>
                 </div> 
                 <div className="form-floating mb-3">
                     <input type="text" className="form-control" id="floatingLocation" onChange={handlerLotLocation} placeholder='ciao' required/>
-                    <label for="floatingLocation">{t("locationLot")}</label>
+                    <label htmlFor="floatingLocation">{t("locationLot")}</label>
                 </div>     
                 <div className='mb-3 disabled' style={{textAlign: 'center'}} title={(showActorRole(actors, currentaccount, t) !== t("sup")) ? t("limit") : ""}>
                     <button className="me-1 btn btn-success"  disabled={(showActorRole(actors, currentaccount, t).includes(t("sup"))) ? false : true} onSubmit={handlerCreateLot} style={{width: '10cm', fontWeight: 'bold'}}>{t("create")}</button>
@@ -493,24 +522,28 @@ function PerformAction() {
                         ))}
                     </select>
                     {
-                        actionType >= 0 && actionType <= 4 && actionType !== 3 &&
+                        [ACTION_TYPES.MANUFACTURING, ACTION_TYPES.DISTRIBUTION, ACTION_TYPES.RETAILING].includes(actionType) &&
                         <div>
                             <div className="form-floating mb-3 mt-3">
                                 <input type="text" className="form-control" id="floatingLocation" onChange={handlerChangeLocation} placeholder="New location in warehouse" required/>
-                                <label for="floatingLocation">{t("locationLot")}</label>
+                                <label htmlFor="floatingLocation">{t("locationLot")}</label>
+                            </div>
+                            <div className="form-floating mb-3 mt-3">
+                                <input type="number" className="form-control" id="floatingSize" onChange={handlerLotSize} placeholder='ciao' required/>
+                                <label htmlFor="floatingSize">{t("sizeLot")}</label>
                             </div>
                             <div className="form-floating mb-3">
                                 <input type="number" className="form-control" id="floatingDuration" onChange={handlerChangeDuration} placeholder="Duration of the action (in min)" required/>
-                                <label for="floatingDuration">{t("duration")}</label>
+                                <label htmlFor="floatingDuration">{t("duration")}</label>
                             </div> 
                             <div className="mb-3">
-                                <label for="for-file">{t("describeAction")}</label>
+                                <label htmlFor="for-file">{t("describeAction")}</label>
                                 <input id="form-file" className="form-control " type="file" onChange={(e)=>setActionFile(e.target.files[0])} required/>
                             </div>  
                         </div>
                     }
                     {
-                        actionType === 3 && //tranformation
+                        actionType === ACTION_TYPES.TRANSFORMATION &&
                         <div>
                             <div className='form mb-3 mt-3'> 
                                 <select className="form-select" onChange={handlerProductID} required> 
@@ -524,24 +557,24 @@ function PerformAction() {
                             </div> 
                             <div className="form-floating mb-3 mt-3">
                                 <input type="number" className="form-control" id="floatingSize" onChange={handlerLotSize} placeholder='ciao' required/>
-                                <label for="floatingSize">{t("sizeLot")}</label>
+                                <label htmlFor="floatingSize">{t("sizeLot")}</label>
                             </div> 
                             <div className="form-floating mb-3 mt-3">
                                 <input type="text" className="form-control" id="floatingLocation" onChange={handlerChangeLocation} placeholder="New location in warehouse" required/>
-                                <label for="floatingLocation">{t("locationLot")}</label>
+                                <label htmlFor="floatingLocation">{t("locationLot")}</label>
                             </div>
                             <div className="form-floating mb-3">
                                 <input type="number" className="form-control" id="floatingDuration" onChange={handlerChangeDuration} placeholder="Duration of the action (in min)" required/>
-                                <label for="floatingDuration">{t("duration")}</label>
+                                <label htmlFor="floatingDuration">{t("duration")}</label>
                             </div> 
                             <div className="mb-3">
-                                <label for="for-file">{t("describeAction")}</label>
+                                <label htmlFor="for-file">{t("describeAction")}</label>
                                 <textarea id="form-file" className="form-control " type="text" onChange={handlerChangeTrans} required/>
                             </div>  
                         </div>
                     }
                     {
-                        actionType === 5 && //integration
+                        actionType === ACTION_TYPES.INTEGRATION &&
                         <div>
                             <br/>
                             <Select 
@@ -559,43 +592,51 @@ function PerformAction() {
                                 <input type="text" className="form-control" id="floatingLocation" onChange={handlerChangeLocation} required/>
                             </div>
                             <div className="form mb-3">
-                                <label for="floatingDuration">{t("duration")}</label>
+                                <label htmlFor="floatingDuration">{t("duration")}</label>
                                 <input type="number" className="form-control" id="floatingDuration" onChange={handlerChangeDuration} required/>
                             </div> 
                             <div className="form mb-3">
-                                <label for="floatingDuration">{t("describeAction")}</label>
+                                <label htmlFor="floatingDuration">{t("describeAction")}</label>
                                 <input className="mt-2 form-control " type="file" id="formFile" onChange={(e)=>setActionFile(e.target.files[0])} required/>
                             </div> 
                         </div>
                     }
                     {
-                        actionType === 6 && //division
+                        actionType === ACTION_TYPES.DIVISION &&
                         <div>
                             <br/>
-                            Weight of current lot: <b>{parseInt(absoluteLot[absoluteLotId].size)}</b> kg
+                            Weight of current lot: <b>{lotSizeCurrent}</b> kg
                             <div className="form mb-3 mt-3">
                                 <label >{t("locationLot")}</label>
                                 <input type="text" className="form-control" id="floatingLocation" onChange={handlerChangeLocation} required/>
                             </div>
                             <div className="form mb-3">
-                                <label for="floatingDuration">{t("duration")}</label>
+                                <label htmlFor="floatingDuration">{t("duration")}</label>
                                 <input type="number" className="form-control" id="floatingDuration" onChange={handlerChangeDuration} required/>
                             </div> 
                             <div className="form mb-3">
-                                <label for="floatingDuration">{t("numberLot")}</label>
+                                <label htmlFor="floatingDuration">{t("numberLot")}</label>
                                 <input className="mt-2 me-1 form-control" type="number" onChange={handleChangeDivision} required />
                             </div> 
                             <div className="form mb-3">
-                                <label for="floatingDuration">{t("describeAction")}</label>
+                                <label htmlFor="floatingDuration">{t("describeAction")}</label>
                                 <input className="mt-2 form-control " type="file" id="formFile" onChange={(e)=>setActionFile(e.target.files[0])} required/>
                             </div> 
                             {possibleIngr.map((_, index) => (
                                 <div key={index}>
                                     <label>Weight (Kg) of new lot #{index + 1}</label>
-                                    <input className="mt-2 ms-2" type="number" onChange={(e)=>weights[index]=parseInt(e.target.value)} required />
+                                    <input className="mt-2 ms-2" type="number" value={weights[index] || ''} onChange={(e)=>{
+                                        const newWeights = [...weights];
+                                        newWeights[index] = parseInt(e.target.value) || 0;
+                                        setWeights(newWeights);
+                                    }} required />
                                     <br/>
                                 </div>
                             ))}
+                            <div className="mt-2">
+                                <b>Sum of new lots:</b> <span style={{color: divisionSum > lotSizeCurrent ? 'red' : 'green'}}>{divisionSum} kg</span> / {lotSizeCurrent} kg
+                            </div>
+                            {divisionError && <div className="alert alert-danger mt-2">{divisionError}</div>}
                         </div>
                     }
                 </Modal.Body>
@@ -603,7 +644,7 @@ function PerformAction() {
                     <Button variant="secondary" onClick={handleClose}>
                         {t("close")}
                     </Button>
-                    <Button variant="warning" disabled={cond ? false : true} onClick={handleSaveClose}>
+                    <Button variant="warning" disabled={cond === false || (actionType === ACTION_TYPES.DIVISION && !isDivisionValid)} onClick={handleSaveClose}>
                         {t("perform")}
                     </Button>
                 </Modal.Footer>
