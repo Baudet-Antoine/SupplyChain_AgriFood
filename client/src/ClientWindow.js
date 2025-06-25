@@ -75,7 +75,8 @@ function ClientWindow() {
                 break;
             }
         }
-        if (cond) history("/show", {state: (retID-1)});
+        // FIX: pass the actual absolute_id, not retID-1
+        if (cond) history("/show", {state: retID});
         else{
             window.alert(
                 t("attention")

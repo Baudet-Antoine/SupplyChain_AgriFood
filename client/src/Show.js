@@ -308,6 +308,45 @@ function Show() {
         )
     }
     
+    // Find the retail lot by absolute_id
+    let foundRetLot = null;
+    if (retLotStock) {
+        for (const key of Object.keys(retLotStock)) {
+            const lot = retLotStock[key];
+            if (parseInt(lot.absolute_id) === temporary) {
+                foundRetLot = lot;
+                break;
+            }
+        }
+    }
+    if (!foundRetLot) {
+        // LOG: Not found, print all available absolute_ids
+        const available = retLotStock ? Object.values(retLotStock).map(l => l.absolute_id).join(', ') : 'none';
+        return (
+            <div className='main mb-5'>
+                <dev className='container'>
+                    <button onClick={redirect_to_ClientHome} className="ms-4 btn btn-danger" style={{ position: 'absolute', left: '35px', top: '40px' }}>HOME</button>
+                    <h1 className='title'>Supply Chain</h1>
+                    <GB title="English" type='button' onClick={() => handleChangeLanguage("en")}  style={{position: 'absolute', right: '55px', top: '45px', height: '30px'}}/>
+                    <IT title="Italiano" type='button' onClick={() => handleChangeLanguage("it")}  style={{position: 'absolute', right: '120px', top: '45px', height: '30px'}}/>
+                </dev>
+                <br /><br/>
+                <h2 style={{color: 'red'}}>Error: No retail lot found for absolute_id = {temporary}</h2>
+                <p>Available retail lots: {available}</p>
+            </div>
+        )
+    }
+    // Defensive: check product exists
+    const productIdx = parseInt(foundRetLot.id_product) - 1;
+    const productObj = product ? product[productIdx] : null;
+    if (!productObj) {
+        return (
+            <div className='main mb-5'>
+                <h2 style={{color: 'red'}}>Error: No product found for id_product = {foundRetLot.id_product}</h2>
+            </div>
+        )
+    }
+
     return(
         <div className='main mb-5'>
             <dev className='container'>
@@ -317,15 +356,10 @@ function Show() {
                 <IT title="Italiano" type='button' onClick={() => handleChangeLanguage("it")}  style={{position: 'absolute', right: '120px', top: '45px', height: '30px'}}/>
             </dev>
             <br /><br/>
-            
-            <h1>{t("lotToTrack")} {product[parseInt(retLotStock[temporary-1].id_product)-1].name}</h1>
-           
+            <h1>{t("lotToTrack")} {productObj.name}</h1>
             <div className="h4 pb-4 mb-4 border-bottom border-dark"></div>
             <br/>
-
-            {getAction(3, lotId)}
-
-
+            {getAction(3, [parseInt(foundRetLot.id)])}
         </div>
     )
     
