@@ -1,4 +1,6 @@
 {
+    "userActionText":"Obtained with action of",
+    "userProductInfo":"Product info:",
     "loading": "Loading...",
     "ethAlert": "Non-Ethereum browser detected. You should consider trying MetaMask!",
     "contractAlert": "The smart contract is not deployed to current network",

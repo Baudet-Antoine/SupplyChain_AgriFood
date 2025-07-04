@@ -1,4 +1,6 @@
 {
+    "userActionText":"Ottenuto con azione di",
+    "userProductInfo":"Info prodotto:",
     "loading": "Caricamento...",
     "ethAlert": "Rilevato browser non Ethereum. Dovresti provare MetaMask!",
     "contractAlert": "Lo smart contract non è distribuito sulla rete attuale",

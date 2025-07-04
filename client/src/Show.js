@@ -284,11 +284,11 @@ function Show() {
                                                         <p>
                                                             {actors[listActor[key][k]-1].name}, <a href={'https://gateway.pinata.cloud/ipfs/'+ actors[listActor[key][k]-1].hashFileActor} target='_blank' rel="noreferrer">{t("read")}</a> <br/>
                                                             {actors[listActor[key][k]-1].place} <br/>
-                                                            Ottenuto con azione di {showActionType(actions[listAction[key][k]-1].actionType, t)} <br/>
+                                                            {t("userActionText")} {showActionType(actions[listAction[key][k]-1].actionType, t)} <br/>
                                                             {Object.values(hashProd[parseInt(product[parseInt(absoluteLot[listLot[key][k]-1].id_product)-1].id)-1]).map(function (keys) {
                                                                 return(
                                                                     <div>
-                                                                        Info prodotto: <a href={'https://gateway.pinata.cloud/ipfs/'+ keys} target='_blank' rel="noreferrer">{t("read")}</a>
+                                                                        {t("userProductInfo")} <a href={'https://gateway.pinata.cloud/ipfs/'+ keys} target='_blank' rel="noreferrer">{t("read")}</a>
                                                                     </div>
                                                                 )
                                                             })}
